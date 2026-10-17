@@ -21,6 +21,8 @@ Interfaz en español · Diseño responsivo · Inversión simulada · Alpaca Pape
 
 **Soltech** es la aplicación web de inversión y aprendizaje financiero del equipo [Team3DS](https://github.com/Team3DS). Integra un recorrido de registro, un dashboard personalizado, operaciones de práctica, una conexión local con Alpaca Paper y reportes de transacciones y cargos por período.
 
+**El proyecto incluye un frontend y un backend local básico desarrollado para permitir la simulación de inversión y las pruebas con Alpaca Paper.** Este backend está en `server/` y sirve de apoyo al prototipo; todavía no implementa autenticación real ni una base de datos propia.
+
 La identidad de la aplicación utiliza verde profundo y lima, tipografías DM Sans y Manrope y un símbolo de sol en SVG como logo provisional.
 
 | Modalidad | Funcionamiento | Requisitos |
@@ -29,6 +31,23 @@ La identidad de la aplicación utiliza verde profundo y lima, tipografías DM Sa
 | **Alpaca Paper** | Cotizaciones de proveedores y órdenes, ejecuciones y posiciones en una cuenta paper existente | Claves paper configuradas en el servidor local |
 
 El registro, correo, MFA y creación de cuenta del onboarding son demostrativos. La conexión con Alpaca se configura por separado y utiliza exclusivamente dinero virtual.
+
+> ### `Backend básico para la simulación`
+
+Se desarrolló un **backend local en Node.js** para conectar la interfaz con los servicios necesarios para una simulación básica de inversión, conservando las claves de los proveedores en el servidor.
+
+| Responsabilidad | Qué hace el backend |
+| --- | --- |
+| Configuración | Carga las claves de Alpaca y Finnhub desde `.env`, sin enviarlas al navegador. |
+| Cotizaciones | Consulta precios de Alpaca y, si se configura, utiliza Finnhub como respaldo. |
+| Cuenta y mercado | Consulta saldo, posiciones y reloj oficial del mercado. |
+| Órdenes paper | Valida fondos, activo, horario y cantidad; envía órdenes exclusivamente al entorno paper de Alpaca y consulta su ejecución. |
+| Reportes | Obtiene el historial paginado de ejecuciones y cargos; el frontend filtra, agrupa y exporta esos datos. |
+| Ejecución local | Atiende `/api/paper/*` junto con Vite mediante `npm run dev`; con `npm start` sirve la aplicación compilada y su API. |
+
+La **demostración sin claves** realiza sus operaciones en el frontend con precios y fondos ficticios, y conserva los datos en el navegador. La modalidad **Alpaca Paper** utiliza el backend local y una cuenta paper existente para consultar datos y tramitar operaciones con dinero virtual.
+
+El registro, inicio de sesión, verificación de correo, MFA, creación de cuenta y fondeo del onboarding **siguen siendo demostrativos**. El backend básico no envía correos, no autentica usuarios ni crea cuentas de Alpaca. Para una versión con usuarios reales se debe ampliar con autenticación, sesiones, autorización por cuenta y persistencia segura.
 
 > ### `Stack`
 
@@ -422,7 +441,7 @@ Para compartir el proyecto, sube el código, `package-lock.json` y `.env.example
 
 El registro no envía correos, no configura MFA real ni crea cuentas en Alpaca. En las secciones locales los precios siguen siendo fijos e ilustrativos; el gráfico mantiene el valor actual y el selector de período cambia el eje, sin representar un historial real. El fondeo local no modifica el saldo en Alpaca: ese saldo se administra desde la cuenta paper del proveedor.
 
-La autenticación, correo, MFA, creación de cuentas y fondeo reales requieren un backend con sesiones y persistencia segura. Las claves secretas nunca deben ponerse en variables `VITE_*`, código del cliente ni `localStorage`.
+El backend local básico ya existe como apoyo a la simulación y a la conexión con Alpaca Paper. La autenticación, correo, MFA, creación de cuentas y fondeo reales requieren ampliar ese backend con sesiones, autorización y persistencia segura. Las claves secretas nunca deben ponerse en variables `VITE_*`, código del cliente ni `localStorage`.
 
 Los textos de términos y privacidad muestran información contextual de la demostración; deben reemplazarse por documentos legales definitivos antes de un lanzamiento real.
 
