@@ -1,4 +1,5 @@
 import type { PaperOrder, PaperQuote, PaperResult, PaperSnapshot } from '@/types/paper'
+import type { ActivityPage } from '@/types/reports'
 
 export class PaperError extends Error {
   code: string
@@ -16,6 +17,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 export const paperApi = {
   status: () => request<{ configured: boolean; mode: 'paper'; feed: string }>('status'),
   snapshot: () => request<PaperSnapshot>('snapshot'),
+  activities: (pageToken = '') => request<ActivityPage>(`activities?pageToken=${encodeURIComponent(pageToken)}`),
   quote: (symbol: string) => request<PaperQuote>(`quote?symbol=${encodeURIComponent(symbol)}`),
   order: (clientOrderId: string) => request<{ order: PaperOrder }>(`order?clientOrderId=${encodeURIComponent(clientOrderId)}`),
   submit: (input: { symbol: string; quantity: number; side: 'buy' | 'sell'; clientOrderId: string }) => request<PaperResult>('orders', { method: 'POST', body: JSON.stringify(input) }),

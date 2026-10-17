@@ -121,5 +121,15 @@ export function createBroker({ env = process.env, fetcher = fetch, now = Date.no
     }
     return { order, clientOrderId: input.clientOrderId, elapsedMs: now() - started, uncertain: false }
   }
-  return { configured, feed, snapshot, quote, submit, findOrder }
+  async function activities(pageToken = '') {
+    if (typeof pageToken !== 'string' || pageToken.length > 256 || /[\u0000-\u001f]/.test(pageToken)) throw new ApiError(400, 'El cursor del historial no es válido.')
+    const params = new URLSearchParams({ activity_types: 'FILL,FEE,DIVFEE,PTC,PTR', direction: 'desc', page_size: '100' })
+    if (pageToken) params.set('page_token', pageToken)
+    const rows = await paper(`/account/activities?${params}`)
+    if (!Array.isArray(rows) || rows.length > 100 || rows.some(row => !row || typeof row.id !== 'string' || typeof row.activity_type !== 'string')) throw new ApiError(502, 'Alpaca devolvió un historial inválido.')
+    const nextPageToken = rows.length === 100 ? rows.at(-1).id : null
+    if (nextPageToken && nextPageToken === pageToken) throw new ApiError(502, 'Alpaca repitió una página del historial. No se puede confirmar que el reporte esté completo.')
+    return { activities: rows.map(a => ({ id: a.id, activity_type: a.activity_type, transaction_time: a.transaction_time, date: a.date, symbol: a.symbol, side: a.side, qty: a.qty, price: a.price, order_id: a.order_id, net_amount: a.net_amount, description: a.description, currency: a.currency })), nextPageToken }
+  }
+  return { configured, feed, snapshot, quote, submit, findOrder, activities }
 }

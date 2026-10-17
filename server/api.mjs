@@ -11,6 +11,7 @@ export function createApiHandler(broker = createBroker()) {
       const url = new URL(req.url, `http://${host}`)
       if (req.method === 'GET' && url.pathname === '/api/paper/status') return send(200, { configured: broker.configured, feed: broker.feed, mode: 'paper' })
       if (req.method === 'GET' && url.pathname === '/api/paper/snapshot') return send(200, await broker.snapshot())
+      if (req.method === 'GET' && url.pathname === '/api/paper/activities') return send(200, await broker.activities(url.searchParams.get('pageToken') || ''))
       if (req.method === 'GET' && url.pathname === '/api/paper/quote') return send(200, await broker.quote(url.searchParams.get('symbol') || ''))
       if (req.method === 'GET' && url.pathname === '/api/paper/order') {
         const order = await broker.findOrder(url.searchParams.get('clientOrderId') || '')
