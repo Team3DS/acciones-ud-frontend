@@ -1,6 +1,54 @@
+# Dependencias y cachés de gestores de paquetes
 node_modules/
+.pnpm-store/
+.npm/
+
+# Compilaciones, cobertura y archivos generados
 dist/
+dist-ssr/
 coverage/
 .vite/
-.env*
+.cache/
+*.tsbuildinfo
+
+# Variables de entorno y credenciales locales
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Registros y archivos temporales
 *.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Configuración personal de editores
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+*.suo
+*.user
+*.sln.docstates
+
+# Archivos del sistema operativo
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Resultados locales de pruebas de navegador
+playwright-report/
+test-results/
+
+# Los archivos de bloqueo (package-lock.json, pnpm-lock.yaml)
+# se conservan en Git para reproducir la instalación.
