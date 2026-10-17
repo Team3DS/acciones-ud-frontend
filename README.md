@@ -19,128 +19,52 @@ Interfaz en español · Diseño responsivo · Inversión simulada · Alpaca Pape
 
 > ### `Sobre el repositorio`
 
-**Soltech** es la aplicación web de inversión y aprendizaje financiero del equipo [Team3DS](https://github.com/Team3DS). Integra un recorrido de registro, un dashboard personalizado, operaciones de práctica, una conexión local con Alpaca Paper y reportes de transacciones y cargos por período.
+**Soltech** es el prototipo de la plataforma Acciones UD desarrollado por Team3DS. Está ajustado al borrador de requerimientos **v0.2, del 12 de octubre de 2026**, entregado por el equipo: solo **NYSE y NASDAQ**, diez acciones y moneda USD.
 
-**El proyecto incluye un frontend y un backend local básico desarrollado para permitir la simulación de inversión y las pruebas con Alpaca Paper.** Este backend está en `server/` y sirve de apoyo al prototipo; todavía no implementa autenticación real ni una base de datos propia.
+Incluye frontend React y **backend local básico en Node.js** para consultar y operar con una cuenta Alpaca Paper de desarrollo. **No es todavía el backend multiusuario completo del documento.** El registro, correo, MFA y fondeo son prototipos de interfaz; la creación automática de cuentas Broker, la autenticación real y el cobro de comisión están pendientes.
 
-La identidad de la aplicación utiliza verde profundo y lima, tipografías DM Sans y Manrope y un símbolo de sol en SVG como logo provisional.
-
-| Modalidad | Funcionamiento | Requisitos |
-| --- | --- | --- |
-| **Demostración local** | Datos y fondos ficticios guardados en el navegador; disponible sin claves | Node.js y dependencias del proyecto |
-| **Alpaca Paper** | Cotizaciones de proveedores y órdenes, ejecuciones y posiciones en una cuenta paper existente | Claves paper configuradas en el servidor local |
-
-El registro, correo, MFA y creación de cuenta del onboarding son demostrativos. La conexión con Alpaca se configura por separado y utiliza exclusivamente dinero virtual.
-
-> ### `Backend básico para la simulación`
-
-Se desarrolló un **backend local en Node.js** para conectar la interfaz con los servicios necesarios para una simulación básica de inversión, conservando las claves de los proveedores en el servidor.
-
-| Responsabilidad | Qué hace el backend |
-| --- | --- |
-| Configuración | Carga las claves de Alpaca y Finnhub desde `.env`, sin enviarlas al navegador. |
-| Cotizaciones | Consulta precios de Alpaca y, si se configura, utiliza Finnhub como respaldo. |
-| Cuenta y mercado | Consulta saldo, posiciones y reloj oficial del mercado. |
-| Órdenes paper | Valida fondos, activo, horario y cantidad; envía órdenes exclusivamente al entorno paper de Alpaca y consulta su ejecución. |
-| Reportes | Obtiene el historial paginado de ejecuciones y cargos; el frontend filtra, agrupa y exporta esos datos. |
-| Ejecución local | Atiende `/api/paper/*` junto con Vite mediante `npm run dev`; con `npm start` sirve la aplicación compilada y su API. |
-
-La **demostración sin claves** realiza sus operaciones en el frontend con precios y fondos ficticios, y conserva los datos en el navegador. La modalidad **Alpaca Paper** utiliza el backend local y una cuenta paper existente para consultar datos y tramitar operaciones con dinero virtual.
-
-El registro, inicio de sesión, verificación de correo, MFA, creación de cuenta y fondeo del onboarding **siguen siendo demostrativos**. El backend básico no envía correos, no autentica usuarios ni crea cuentas de Alpaca. Para una versión con usuarios reales se debe ampliar con autenticación, sesiones, autorización por cuenta y persistencia segura.
+La [matriz de alineación de los 106 requisitos](docs/ALINEACION_REQUISITOS_V02.md) registra qué está parcial, qué solo tiene diseño y qué sigue pendiente. El PDF de mockups revisado se encuentra en [output/pdf/Soltech_Mockups_Interfaces_V02.pdf](output/pdf/Soltech_Mockups_Interfaces_V02.pdf).
 
 > ### `Stack`
 
-1. **React con TypeScript** para la interfaz y los tipos de dominio.
-2. **Vite** como empaquetador y servidor de desarrollo.
-3. Alias **`@` → `src`** para importaciones cortas.
-4. **CSS propio** con puntos de adaptación para teléfonos, tabletas y escritorio; sin Bootstrap ni Tailwind.
-5. **Node.js** para la API local, carga de variables de entorno y llamadas protegidas a proveedores.
-6. **Alpaca Trading API y Market Data** para el entorno paper; **Finnhub** como respaldo opcional de cotizaciones.
-7. **localStorage** para el avance y las operaciones de la demo; **sessionStorage** para recuperar el seguimiento de una orden paper pendiente en la misma pestaña.
-8. **Node Test Runner** para las pruebas automáticas, sin enviar órdenes a Alpaca.
+1. React con TypeScript y Vite.
+2. Alias `@` hacia `src`.
+3. CSS propio, iconos SVG y diseño adaptable desde móvil.
+4. Node.js para API local y claves de proveedores.
+5. Alpaca Trading API / Market Data en paper; Finnhub como respaldo opcional.
+6. Node Test Runner para las pruebas controladas.
 
-Se recomienda **Node.js 24**. La guía utiliza npm y el archivo de bloqueo incluido; el proyecto también declara pnpm en `packageManager`.
+Recomendado: **Node.js 24** con npm. El proyecto declara también pnpm en `packageManager`; esta guía utiliza el `package-lock.json` incluido.
 
-> ### `Características implementadas`
+> ### `Características y estado actual`
 
-| Funcionalidad | Qué incluye | Modalidad |
+| Área | Implementado en el prototipo | Integración pendiente |
 | --- | --- | --- |
-| Registro | Nombre, apellido, correo, contraseña, residencia fiscal y validación de campos | Demo local |
-| Verificación de correo | Código de prueba, reenvío simulado y corrección de dirección | Demo local |
-| Verificación MFA | Confirmación con un segundo código de prueba | Demo local |
-| Cuenta de práctica y fondeo | Identificador local, capital inicial entre 100 y 1.000.000 USD y fondos virtuales adicionales | Demo local |
-| Acceso y continuidad | Acceso demostrativo, cierre de sesión y recuperación del avance en el navegador; la contraseña no se almacena | Demo local |
-| Dashboard personalizado | Nombre del usuario, valor del portafolio, disponible, capital invertido y gráfico ilustrativo | Demo local |
-| Mercado y operaciones | Búsqueda de activos, compras y ventas de acciones enteras, validación de fondos y posiciones | Demo local |
-| Portafolio, órdenes y favoritos | Posiciones abiertas, historial de operaciones, filtros de órdenes y lista de seguimiento | Demo local |
-| Cotizaciones NYSE y NASDAQ | Diez símbolos disponibles, bid/ask de Alpaca, fuente, fecha y aviso de cotización desactualizada | Alpaca Paper |
-| Respaldo de cotizaciones | Último precio de Finnhub, identificado como referencia sin bid/ask | Alpaca Paper, configuración opcional |
-| Órdenes al mercado | Validación de cuenta, activo, horario oficial, fondos y acciones disponibles; sin ventas en corto | Alpaca Paper |
-| Seguimiento de ejecución | Órdenes aceptadas, parciales, ejecutadas, rechazadas y otros estados; recuperación por identificador y control de duplicados | Alpaca Paper |
-| Sincronización y notificaciones | Actualización de saldo y posiciones, avisos de estado y notificaciones de la sesión | Alpaca Paper |
-| Reportes por período | Hoy, últimos 7 días, mes actual, mes anterior, año y fechas personalizadas; agrupación diaria o mensual | Ambos orígenes, consultados por separado |
-| Desglose de transacciones | Ejecuciones, cantidades, precios, importes brutos e identificadores | Ambos orígenes |
-| Comisiones y cargos | Cargos, reembolsos, categorías y fecha contable del proveedor; sin estimar tarifas faltantes | Alpaca Paper; la demo no cobra comisiones |
-| Exportación CSV | Resumen, transacciones o cargos de todo el período, con metadatos y protección de campos de texto | Ambos orígenes |
-| Historial paginado | Carga de actividades de Alpaca por lotes y bloqueo de totales y exportaciones mientras falten páginas | Alpaca Paper |
-| Experiencia de uso | Interfaz en español, menú móvil, formularios etiquetados, navegación de pestañas por teclado y avisos de estado | Toda la aplicación |
+| Registro RF-01 | Nombre, apellido, documento de prueba, celular, correo, nivel, mercados, sectores, país e interés Premium | Correo único, alta segura y persistencia por usuario |
+| MFA RF-02 | Vista OTP por correo, seis dígitos, vencimiento a los cinco minutos y bloqueo visual tras cinco fallos | OTP real de un solo uso, correo, bloqueo seguro y sesiones de servidor |
+| Cuenta RF-06 / RF-08 | Pasos visuales de cuenta y fondeo sandbox | Alta automática por Broker API y movimientos de fondos por usuario |
+| Mercados RF-11 / RF-12 | Diez acciones NYSE/NASDAQ; sectores; reloj de Alpaca y calendario del proveedor | Parametrización completa y metadatos que no entregue el feed |
+| Dashboard RF-18 | Nombre, nivel, intereses y cuenta del proveedor, cuando está conectada | Aislamiento de usuarios y series históricas reales |
+| Cotizaciones RF-17 | Bid, ask, spread, último precio, variación y volumen cuando el proveedor los devuelve; fuente y fecha | Capitalización e históricos. Se muestra «No disponible» cuando falta un dato |
+| Market / Limit RF-25 / RF-26 | Cantidad entera, revisión previa, precio límite, DAY/GTC y envío a Alpaca | Libro de reservas y liquidación transaccional propios |
+| Comisión RF-30 | Cálculo de referencia al 2 %, half-up a dos decimales; compra suma y venta resta | Cobro real en sandbox, tarifas por mercado, vigencias y registro por usuario |
+| Cola RF-13 | Confirmación explícita fuera de sesión; envío sin horario extendido para que Alpaca gestione la cola | Persistir la confirmación y los eventos con actor y causa |
+| Cancelación RF-34 | Solicitud de cancelación de órdenes Soltech pendientes y sin ejecución parcial | Libro propio que registre la liberación de valor más comisión |
+| Historial RF-35 | Filtros por estado, acción, mercado y fechas; detalle y fechas conocidas del proveedor | Historial completo de transiciones; la lista usa las últimas 100 órdenes |
+| Portafolio RF-38 | Cantidad, precio medio, actual, valor y ganancia/pérdida absoluta y porcentual | Consistencia ACID con cuentas y órdenes por usuario |
+| Notificaciones RF-49 | Centro de sesión con contador de no leídas | Correo transaccional, persistencia y reintentos asíncronos |
+| Perfil RF-57 | Edición de datos e intereses y solicitud de reporte mensual, guardadas localmente | Identidad y preferencias de servidor; generación y envío mensual |
+| Premium RF-59 / RF-60 | Plan mensual USD 12 y anual USD 120; favoritos y alertas no se ofrecen como gratuitos | Stripe test, webhooks y autorización de servidor |
+| Reportes RF-64 / RF-65 | Fechas, agrupación, ejecuciones, cargos del proveedor y pestaña de comisión estimada de Soltech | Comisiones efectivamente cobradas, reportes de órdenes completos y consolidado por usuario autenticado |
+| CSV RF-69 | Exportación completa del período, UTF-8 BOM y protección de texto contra fórmulas | Exportación financiera a PDF; el PDF de mockups es documentación de diseño |
 
-**Objetivo de respuesta para órdenes:** ≤ 5 segundos para devolver confirmación o estado pendiente. El llenado completo depende de Alpaca, el mercado y la red; no se garantiza una ejecución dentro de ese tiempo.
-
-> ### `Estructura`
-
-```text
-soltech/
-├── public/
-│   └── soltech.svg       Logo provisional y favicon
-├── server/               API local y conexión con Alpaca Paper
-│   ├── alpaca.mjs        Cotizaciones, órdenes, cuenta y actividades
-│   ├── api.mjs           Rutas y validación del origen
-│   ├── env.mjs           Carga de configuración del servidor
-│   └── index.mjs         Servidor de la compilación local
-├── src/
-│   ├── assets/           Recursos adicionales
-│   ├── components/       Iconos SVG y marca
-│   ├── features/
-│   │   ├── paper/        Operaciones conectadas con Alpaca
-│   │   └── reports/      Reportes y exportación CSV
-│   ├── hooks/            Espacio para hooks compartidos
-│   ├── pages/
-│   │   ├── Onboarding.tsx
-│   │   └── Dashboard.tsx
-│   ├── services/         Mercado local, operaciones y cliente paper
-│   ├── store/            Estado inicial y recuperación local
-│   ├── styles/           Estilos globales, paper y reportes
-│   ├── types/            Contratos de cuenta, paper y reportes
-│   ├── utils/            Fechas, agregaciones e importes de reportes
-│   ├── App.tsx           Estado y navegación principal
-│   └── main.tsx          Arranque de React
-├── tests/                Pruebas locales y proveedores controlados
-├── .env.example          Plantilla sin secretos
-├── .gitignore            Exclusiones del repositorio
-├── package.json          Dependencias y comandos
-├── package-lock.json     Versiones reproducibles con npm
-├── tsconfig.json         Configuración de TypeScript
-└── vite.config.ts        Vite, alias y API de desarrollo
-```
-
-El alias `@` apunta a `src`. Se utiliza CSS propio, sin frameworks de estilos ni dependencias de iconos. Las fuentes DM Sans y Manrope se solicitan a Google Fonts; existen fuentes locales de respaldo.
+**Sin mercados simulados:** el flujo activo ya no usa el motor local de operaciones con precios fijos. Sin claves puedes navegar, completar el prototipo de registro y revisar los estados vacíos; para cotizar y enviar órdenes debes conectar Alpaca Paper. Los módulos anteriores de demo se conservan como código legado y no son la entrada de la aplicación.
 
 > ### `Puesta en marcha`
 
-Hay dos formas de usar Soltech:
+#### 1. Requisitos
 
-| Modo | Qué permite | Qué necesitas |
-| --- | --- | --- |
-| **Demostración local** | Registro, correo y MFA simulados, fondeo virtual, compras y ventas con precios de ejemplo | Node.js y las dependencias del proyecto. No requiere claves. |
-| **Alpaca · Paper** | Cotizaciones de proveedores, órdenes y posiciones conectadas a una cuenta paper | Lo anterior, una cuenta Alpaca Paper y sus claves configuradas localmente |
-
-**Para abrir la aplicación basta con instalar las dependencias y ejecutar `npm run dev`.** La configuración de Alpaca solo es necesaria para la sección conectada. Frontend y API arrancan juntos; no se necesita una segunda terminal, Docker ni una base de datos para esta versión.
-
-#### 1. Preparar la máquina
-
-Instala **Node.js 24 LTS**, que incluye npm, y Git si vas a clonar el repositorio. El mínimo del proyecto es Node.js 22.12. Abre una terminal nueva después de instalar Node y verifica:
+Instala Node.js 24 y Git si vas a clonar el repositorio. Abre una terminal nueva y verifica:
 
 ```sh
 node --version
@@ -148,46 +72,37 @@ npm --version
 git --version
 ```
 
-Ejecuta los siguientes comandos desde la raíz del proyecto, donde están `package.json`, `.env.example` y este README.
+#### 2. Obtener e instalar
 
-#### 2. Obtener el proyecto e instalar dependencias
-
-Si aún no tienes el repositorio, copia su URL desde **GitHub → Code**. Sustituye `URL_DEL_REPOSITORIO` por esa URL; el comando crea una carpeta llamada `soltech`:
+Sustituye `URL_DEL_REPOSITORIO` por la URL de GitHub → Code:
 
 ```sh
 git clone URL_DEL_REPOSITORIO soltech
 cd soltech
 npm ci
-```
-
-Si ya tienes el proyecto descargado, abre una terminal en su carpeta y ejecuta solamente:
-
-```sh
-npm ci
-```
-
-`npm ci` instala las versiones del `package-lock.json` incluido en el repositorio. Si vas a agregar o actualizar dependencias, utiliza `npm install` y conserva el archivo de bloqueo actualizado.
-
-#### 3. Arrancar la aplicación
-
-```sh
 npm run dev
 ```
 
-Abre **http://127.0.0.1:5173/**. Si ese puerto está ocupado, Vite mostrará otro: utiliza la dirección que aparezca en tu terminal. Mantén esa terminal abierta. Para detener la aplicación, presiona **Ctrl + C**.
+Si ya descargaste el proyecto, abre la terminal en la carpeta donde está `package.json` y ejecuta solo `npm ci` y `npm run dev`.
 
-Puedes empezar de inmediato con **«Primero quiero explorar el dashboard»**, sin configurar Alpaca. Para recorrer el registro completo, usa correo de prueba, una contraseña con al menos 8 caracteres, una letra y un número, y estos códigos:
+Abre [http://127.0.0.1:5173/](http://127.0.0.1:5173/), o la URL que indique Vite si cambia el puerto. Mantén la terminal abierta; **Ctrl + C** detiene el servidor. Frontend y API arrancan juntos.
 
-| Paso | Código de demostración |
+#### 3. Navegar sin credenciales
+
+Usa **«Explorar el prototipo sin autenticarme»** para abrir el espacio de trabajo, o completa el formulario con **datos ficticios**. El registro solicita documento y celular de prueba, nivel e intereses.
+
+| Pantalla | Código de prueba |
 | --- | --- |
 | Verificación de correo | `123456` |
-| Verificación MFA | `654321` |
+| OTP MFA por correo | `654321` |
 
-#### 4. Activar Alpaca Paper
+No se envían correos ni se comprueban identidades. La caducidad y el bloqueo de códigos son estados de demostración en pantalla; no deben tratarse como medidas de seguridad reales. La contraseña no se almacena. El perfil de prototipo sí se guarda en el navegador: no introduzcas documentos ni datos personales reales.
 
-Cada compañero configura sus propias claves en su máquina. El archivo `.env` está excluido de Git; las claves no vienen en el repositorio.
+El paso de fondeo local no modifica Alpaca. La cuenta Broker por usuario y el historial de fondos están pendientes.
 
-**Crear el archivo de configuración**, desde la raíz del proyecto:
+> ### `Configurar Alpaca Paper`
+
+Cada compañero configura sus propias claves localmente. `.env` no se sube a Git.
 
 Windows / PowerShell:
 
@@ -201,7 +116,7 @@ macOS / Linux:
 if [ ! -f .env ]; then cp .env.example .env; fi
 ```
 
-Estos comandos conservan un `.env` existente. Abre el archivo `.env` con tu editor y completa los valores que faltan:
+Abre `.env` y completa:
 
 ```dotenv
 ALPACA_API_KEY=
@@ -211,163 +126,87 @@ FINNHUB_API_KEY=
 PORT=3001
 ```
 
-| Variable | Cómo completarla |
+| Variable | Valor |
 | --- | --- |
-| `ALPACA_API_KEY` | Clave de API de tu cuenta **Paper Trading** de Alpaca |
-| `ALPACA_SECRET_KEY` | Clave secreta correspondiente a esa misma cuenta paper |
-| `ALPACA_DATA_FEED` | Deja `iex` para comenzar. `sip` requiere permisos de tu suscripción. |
-| `FINNHUB_API_KEY` | Opcional. Déjala vacía si no necesitas el respaldo de cotizaciones. |
-| `PORT` | Deja `3001`. Se usa con `npm start`; el puerto de desarrollo de Vite se configura por separado. |
+| `ALPACA_API_KEY` | Clave de API de la cuenta **Paper Trading** |
+| `ALPACA_SECRET_KEY` | Clave secreta de esa misma cuenta paper |
+| `ALPACA_DATA_FEED` | `iex` para comenzar; `sip` requiere permisos del plan |
+| `FINNHUB_API_KEY` | Opcional, para respaldo de último precio; no proporciona bid/ask |
+| `PORT` | Puerto de `npm start`, por defecto `3001`; no cambia el puerto de Vite |
 
-Para obtener las claves, entra a [Alpaca](https://app.alpaca.markets/), selecciona el entorno **Paper Trading** y genera sus claves de API. Pega los valores después del signo `=` en tu `.env`. **Usa claves paper, conserva los nombres exactos y no agregues el prefijo `VITE_`.**
+Genera las claves desde el entorno **Paper Trading** de [Alpaca](https://app.alpaca.markets/). No uses claves live ni nombres `VITE_*`. Guarda `.env`, detén Vite y vuelve a iniciar `npm run dev`.
 
-Después de guardar `.env`, detén el servidor con **Ctrl + C** y vuelve a ejecutar:
-
-```sh
-npm run dev
-```
-
-En Soltech, entra al dashboard y selecciona **Alpaca · Paper** en el menú lateral. En el teléfono, abre primero el menú superior. Verás el saldo paper, el estado del mercado, las cotizaciones, las posiciones y las órdenes de esa cuenta.
-
-El fondeo de la demostración local no agrega dinero a Alpaca. Para disponer de saldo conectado, administra los fondos virtuales desde tu cuenta **Paper Trading** en Alpaca.
-
-#### 5. Comprobar la conexión
-
-Con el servidor de desarrollo abierto, visita:
-
-```text
-http://127.0.0.1:5173/api/paper/status
-```
-
-Si Vite eligió otro puerto, cámbialo también en esta dirección. Con ambas claves presentes, la respuesta será similar a:
+Consulta [http://127.0.0.1:5173/api/paper/status](http://127.0.0.1:5173/api/paper/status), ajustando el puerto si hace falta:
 
 ```json
 {"configured":true,"feed":"iex","mode":"paper"}
 ```
 
-`configured: true` confirma que el servidor encontró ambas claves; **no comprueba que sean válidas ni que Alpaca esté disponible**. Para verificar esas condiciones, abre **Alpaca · Paper** y comprueba que se carguen los datos de la cuenta. Con `configured: false`, revisa que `.env` esté en la raíz, que ambos valores estén completos y que hayas reiniciado Vite.
+`configured: true` solo indica que están presentes ambas claves. Para comprobar su validez, abre **Mercado y órdenes** y verifica que se cargue la cuenta. La conexión usa una cuenta paper de desarrollo compartida, no una cuenta distinta por perfil.
 
-#### 6. Probar una compra conectada
+> ### `Mercados y operación`
 
-1. Abre **Alpaca · Paper** y comprueba que tu cuenta tenga saldo virtual y que el mercado esté abierto.
-2. Selecciona **AAPL** (NASDAQ) o **JNJ** (NYSE) y pulsa **Actualizar precio**.
-3. Elige **Comprar** e ingresa una cantidad entera de acciones.
-4. Comprueba el importe estimado y el margen de validación del 3 %; pulsa **Comprar … en paper**.
-5. Observa el estado de la orden. **Aceptada** significa que Alpaca la recibió; **Ejecutada** confirma su llenado completo.
-6. Revisa la posición en **Mi portafolio · Alpaca**, la orden y la notificación de la sesión. Contrasta los datos con tu panel de Alpaca.
-
-La sesión regular es de **9:30 a 16:00, hora de Nueva York**, sujeta al calendario del mercado. La aplicación consulta el reloj de Alpaca para aplicar festivos, cierres especiales y horario de verano. Durante fines de semana o con el mercado cerrado, es correcto que no permita enviar la orden.
-
-> ### `Flujo de registro y demostración`
-
-1. **Registro:** nombre, apellido, correo, contraseña y residencia fiscal. La contraseña requiere 8 caracteres, una letra y un número; nunca se almacena.
-2. **Correo:** ingresa **123456**. Puedes simular el reenvío o corregir tu dirección.
-3. **MFA:** ingresa **654321** para simular la validación del segundo factor.
-4. **Cuenta Alpaca:** acepta el uso de fondos ficticios y crea una cuenta de práctica local.
-5. **Fondeo:** elige entre 100 y 1.000.000 USD virtuales.
-6. **Dashboard:** consulta el resumen, explora activos, compra y vende acciones enteras, revisa órdenes y administra favoritos. Puedes agregar más fondos virtuales.
-
-El botón «Primero quiero explorar el dashboard» abre una cuenta de ejemplo con 100.000 USD. El avance, el perfil y las operaciones se conservan en `localStorage` bajo `soltech.account`. «Cerrar sesión» vuelve al acceso de demostración, conservando los datos del navegador. Este acceso no autentica identidades ni comprueba contraseñas; permite retomar la demostración local.
-
-> ### `NYSE y NASDAQ con Alpaca Paper`
-
-La opción **Alpaca · Paper** del menú conecta cotizaciones, órdenes, ejecuciones y posiciones a una cuenta paper existente. Es independiente del saldo y las operaciones de la demostración local.
-
-1. Crea una cuenta paper en [Alpaca](https://app.alpaca.markets/) y genera sus claves de **Paper Trading**.
-2. Copia `.env.example` como `.env` en la raíz del proyecto. Completa `ALPACA_API_KEY` y `ALPACA_SECRET_KEY` localmente. No compartas tus claves en el chat ni las subas al repositorio.
-3. Mantén `ALPACA_DATA_FEED=iex` para el feed de cobertura limitada del plan gratuito. `sip` requiere permisos de tu suscripción.
-4. Opcionalmente, configura `FINNHUB_API_KEY` para consultar el último precio con Finnhub si falla la cotización de Alpaca. Este respaldo no proporciona bid/ask ni ejecuta órdenes.
-5. Reinicia `npm run dev`. El mismo servidor Vite atiende el frontend y `/api/paper/*`.
-6. Entra al dashboard, abre **Alpaca · Paper**, selecciona un activo y consulta su cotización. Durante la sesión regular, elige cantidad y compra o vende con fondos paper.
-
-Para la compilación local usa `npm run build` y `npm start`. `npm run preview` solo sirve el frontend, sin API.
-
-| Bolsa | Símbolos | Sesión regular |
+| Bolsa | Acciones | Sesión regular |
 | --- | --- | --- |
-| NYSE | JNJ, JPM, XOM | 9:30–16:00, America/New_York |
-| NASDAQ | AAPL, MSFT, GOOGL, AMZN, META, TSLA, NVDA | 9:30–16:00, America/New_York |
+| NYSE | JNJ, JPM, XOM | 09:30–16:00, America/New_York |
+| NASDAQ | AAPL, MSFT, GOOGL, AMZN, META, TSLA, NVDA | 09:30–16:00, America/New_York |
 
-El reloj de Alpaca determina la apertura, los festivos, los cierres especiales y el horario de verano. Las órdenes al mercado se bloquean fuera de la sesión regular; no se encolan para el siguiente día.
+El reloj de Alpaca determina festivos, cierre y horario de verano. No se habilitan LSE, TSE, ASX, cripto, margen, cortos, opciones ni horario extendido desde el formulario.
 
-#### Validaciones y confirmaciones
+1. Abre **Mercado y órdenes** y selecciona la acción.
+2. Elige compra o venta, cantidad entera y tipo **Market** o **Limit**. Para Limit, indica precio de dos decimales y vigencia día o hasta cancelación.
+3. Comprueba valor, comisión estimada del 2 % y total/neto. Con mercado cerrado, confirma explícitamente el encolamiento si deseas continuar.
+4. Pulsa **Revisar orden** y después **Confirmar**. Solo entonces se envía a Alpaca Paper.
 
-- El backend valida el símbolo, bolsa, estado negociable, cuenta activa, reloj oficial y cantidad entera. Solo admite compras y ventas de posiciones propias, sin ventas en corto.
-- Antes de comprar, exige una cotización de hasta 90 segundos y comprueba el menor valor entre efectivo y poder de compra, incluyendo un margen del 3 %. Alpaca realiza la validación definitiva; este margen no limita el precio de una orden de mercado.
-- Solo se llama a `https://paper-api.alpaca.markets`. No existe un modo para enviar órdenes a cuentas con dinero real.
-- Se busca responder dentro de cinco segundos con ejecución confirmada o estado pendiente. **No se garantiza una ejecución en cinco segundos**: depende del mercado, la red y Alpaca. El servidor limita comprobaciones y consultas para intentar devolver un estado en unos 4,8 segundos; una interrupción externa puede superar el objetivo de extremo a extremo.
-- Se distinguen las órdenes recibidas, aceptadas, ejecutadas parcialmente, ejecutadas, rechazadas, canceladas y expiradas. Solo `filled` significa ejecución completa.
-- Cada intento conserva un `client_order_id`. Los duplicados concurrentes se agrupan; un timeout ambiguo no provoca un reenvío automático. El identificador pendiente se conserva en `sessionStorage` para retomar el seguimiento al recargar la misma pestaña. Si Alpaca no confirma su recepción, consulta ese identificador en Alpaca antes de volver a operar; la interfaz bloquea nuevas órdenes mientras haya incertidumbre.
-- El cliente consulta órdenes pendientes cada dos segundos, actualiza posiciones y cuenta al detectar cambios y muestra notificaciones. La cuenta se sincroniza también cada 15 segundos y la cotización seleccionada cada 20 segundos. Si una actualización falla, se informa que los valores anteriores pueden estar desactualizados.
-- Los precios de respaldo se identifican como último precio; nunca se presentan como bid/ask. Los precios de ejecución provienen de Alpaca, no del precio mostrado antes de operar.
+La compra exige efectivo y poder de compra suficientes para valor más comisión estimada, y un margen de variación del 3 % adicional para Market. La venta exige acciones disponibles y no permite posiciones cortas.
 
-#### API y archivos
+**Comisión:** para 3 acciones a USD 227,63, el valor es USD 682,89 y la comisión estimada USD 13,66. La compra muestra USD 696,55; la venta USD 669,23. La aplicación todavía **no cobra** esa comisión ni la descuenta del efectivo de Alpaca. La parametrización por mercado y el libro de comisiones siguen pendientes; no se considera cumplido RF-30 íntegramente.
 
-| Ruta | Función |
+Fuera de horario se envía `extended_hours=false` con consentimiento explícito; Alpaca gestiona la cola para la siguiente sesión hábil según sus reglas. No se ejecuta un motor de mercado ficticio. El registro durable de esa confirmación está pendiente.
+
+El objetivo RNF-02 es acuse del proveedor en ≤5 s; una orden aceptada aún puede estar pendiente. No se garantiza llenado completo ni se certifica latencia con pruebas controladas. Un timeout conserva el identificador; no se reenvía automáticamente para evitar duplicados.
+
+En **Mis órdenes** se solicita la cancelación de órdenes propias pendientes sin ejecución. La confirmación y la liberación de las reservas del proveedor deben venir de Alpaca. El detalle muestra fechas conocidas y comisión estimada; aún falta una línea de tiempo propia persistente con actor y causa.
+
+> ### `Reportes por período`
+
+Abre **Reportes**, selecciona origen y fechas, y agrupa por día o mes. Alpaca Paper es el origen predeterminado; el historial local anterior se conserva solo para consulta de datos legado.
+
+| Pestaña | Contenido |
 | --- | --- |
-| `GET /api/paper/status` | Configuración disponible, sin exponer claves |
-| `GET /api/paper/quote?symbol=AAPL` | Cotización con fuente y fecha |
-| `GET /api/paper/snapshot` | Cuenta, posiciones, últimas 100 órdenes y reloj |
-| `GET /api/paper/activities?pageToken=…` | Historial paginado de ejecuciones y cargos para reportes |
-| `POST /api/paper/orders` | Orden de mercado validada con identificador único |
-| `GET /api/paper/order?clientOrderId=…` | Seguimiento y recuperación de una orden |
+| Resumen por período | Ejecuciones, volumen, compras, ventas, cargos y flujo de caja del proveedor |
+| Transacciones | Cantidad de cada ejecución, precio, importe bruto, fechas e identificadores |
+| Comisión Soltech (estimada) | Regla de referencia al 2 %, dos decimales, total compra/neto venta y estado **No cobrada** |
+| Cargos del proveedor | FEE, DIVFEE, PTC y PTR devueltos por Alpaca, separados de la comisión de la plataforma |
 
-El servidor está en `server/`, la interfaz conectada en `src/features/paper/`, el cliente API en `src/services/paper.ts` y los contratos en `src/types/paper.ts`.
+Las ejecuciones se filtran por día completo en America/Bogota. Los cargos usan la fecha contable informada por el proveedor. El flujo neto es ventas menos compras menos cargos más reembolsos; no representa rentabilidad ni saldo final e ignora fondeos, retiros, dividendos e intereses.
 
-Esta integración es **local, de una sola cuenta paper**. Los secretos se cargan desde `.env` en Node, nunca se envían al navegador ni se almacenan en `localStorage`. La API restringe el host a localhost/127.0.0.1 y exige solicitudes del mismo origen. El acceso del onboarding sigue siendo demostrativo: no es autenticación real del backend. No expongas este servidor a Internet ni lo despliegues para varios usuarios sin agregar autenticación de servidor, autorización por cuenta, protección de secretos y límites de uso.
+La comisión estimada usa la tasa actual de referencia, no una tarifa histórica versionada. No debe tratarse como cargo efectivo ni atribuirse a usuarios autenticados: el perfil sigue siendo local. RF-65 permanece parcial hasta tener el libro de comisiones real de sandbox.
 
-#### Comprobación
+El historial se consulta en páginas de hasta 100 actividades, con hasta 1.000 por lote. Usa **Continuar carga** cuando queden páginas; los totales y CSV se habilitan solo tras completar la carga. La exportación incluye todo el período, no solo las 15 filas visibles.
 
-`npm test` verifica la contabilidad local y la integración mediante respuestas controladas de proveedores: ambos mercados, fondos insuficientes, sesión cerrada, cuenta restringida, cotizaciones viejas, ventas sin posiciones, duplicados, timeouts, ejecuciones parciales, respaldo y protección del origen. Estas pruebas no envían órdenes a Alpaca y no certifican la latencia de una conexión real.
+Los importes de origen del proveedor se conservan hasta seis decimales para consulta; los cálculos de comisión usan centavos exactos y half-up a dos decimales. La normalización monetaria completa de todos los módulos a RNF-14 requiere el libro transaccional.
 
-La prueba de aceptación conectada requiere claves paper, saldo y mercado abierto: consultar AAPL o JNJ, enviar una compra, comprobar `filled`, contrastar cantidad/precio con Alpaca, verificar portafolio actualizado y notificación. En un fin de semana o festivo, el resultado esperado es mercado cerrado y ausencia de envío.
+> ### `Premium y preferencias`
 
-Referencias: [órdenes de Alpaca](https://docs.alpaca.markets/us/docs/orders-at-alpaca), [paper trading](https://docs.alpaca.markets/us/docs/paper-trading), [cotizaciones y feeds](https://docs.alpaca.markets/us/reference/stocklatestquotesingle-1), [identificadores de órdenes](https://docs.alpaca.markets/us/reference/getorderbyclientorderid), [Finnhub Quote](https://finnhub.io/docs/api/quote).
+**Premium y favoritos** presenta USD 12/mes y USD 120/año. Los botones Checkout están deshabilitados hasta integrar Stripe test y sus webhooks. Sin suscripción no se habilitan favoritos ni alertas como funciones operativas.
 
-> ### `Reportes de transacciones y comisiones`
+La opción de **vista previa del diseño Premium** permite revisar la maqueta de watchlist sin realizar pagos ni activar una suscripción. La evaluación de umbrales sigue pendiente. No es control de acceso seguro: requiere autorización en servidor.
 
-Abre **Reportes** en el menú lateral del dashboard. En teléfonos, abre primero el menú superior.
-
-1. Selecciona el origen: **Demostración local** o **Alpaca Paper**. La opción paper requiere las claves del `.env` explicadas anteriormente.
-2. Elige **Hoy**, **Últimos 7 días**, **Este mes**, **Mes anterior**, **Este año** o un intervalo **Personalizado**. Las fechas inicial y final se incluyen completas.
-3. Selecciona agrupación por **Día** o **Mes**.
-4. Consulta las pestañas **Resumen por período**, **Transacciones** y **Comisiones y cargos**.
-5. Pulsa **Descargar CSV** en la pestaña que quieras exportar. El archivo contiene todos los registros filtrados del período, aunque la tabla muestre solo 15 por página.
-
-El resumen muestra cantidad de ejecuciones, volumen operado, compras, ventas, cargos, reembolsos, cargos netos y flujo neto. El flujo se calcula como **ventas − compras − cargos + reembolsos**; no representa rentabilidad ni saldo de cuenta. Se excluyen fondeos, retiros, dividendos e intereses.
-
-#### Origen y fechas de los datos
-
-- **Demostración local:** usa exclusivamente las compras y ventas guardadas en este navegador. El simulador no cobra comisiones; no se inventan tarifas para el reporte.
-- **Alpaca Paper:** consulta el historial de actividades de la cuenta, incluyendo ejecuciones realizadas fuera de Soltech. Cada llenado parcial se muestra por separado usando su cantidad ejecutada, sin sumar de nuevo la cantidad acumulada de la orden.
-- Las fechas de las ejecuciones se interpretan en **America/Bogota**. Los cargos usan la **fecha contable proporcionada por Alpaca**, que puede ser posterior a la compra o venta. No se les asigna una fecha de operación por aproximación.
-- Se incluyen actividades **FILL**, **FEE**, **DIVFEE**, **PTC** y **PTR**. Solo se reportan importes en **USD**; las actividades que indiquen otra moneda se excluyen con un aviso, sin convertirlas.
-- Los cargos se desglosan por tipo y descripción del proveedor. Los importes negativos de `net_amount` son cargos; los positivos son reembolsos o ajustes a favor. Si Alpaca no informa una orden asociada, se muestra **No informada**.
-- Que Alpaca no devuelva cargos no garantiza que no existan: pueden publicarse después. No se estiman comisiones faltantes ni se presentan tarifas de cero como confirmación del proveedor.
-
-#### Historial completo y exportación
-
-El reporte conectado utiliza `/api/paper/activities`, con páginas de hasta 100 actividades y cursores del proveedor. Consulta el historial completo antes de filtrar por período, porque los cargos pueden crearse en una fecha distinta de la fecha contable. No se limita a las últimas 100 órdenes del dashboard.
-
-Se cargan hasta 1.000 actividades por lote. Si quedan más, pulsa **Continuar carga** hasta ver **Historial cargado**. Ante un error, utiliza **Reintentar carga**; para consultar movimientos nuevos, pulsa **Actualizar historial**. Los totales y las exportaciones permanecen deshabilitados mientras el historial esté parcial o haya errores.
-
-El CSV usa encabezados en español, separador `;`, codificación UTF-8 con BOM y hasta seis decimales para importes monetarios. Incluye origen, fechas del período, moneda, zona horaria e identificadores. Los campos de texto se protegen para evitar interpretar descripciones como fórmulas al abrirlas en una hoja de cálculo. Los cálculos monetarios utilizan enteros en millonésimas de USD; se redondea cada importe a esa precisión.
-
-Para comprobarlo sin credenciales, realiza compras y ventas en la demostración local, abre **Reportes**, selecciona un período que las incluya y descarga cada pestaña. `npm test` cubre límites de fechas, ejecuciones parciales, cargos posteriores, reembolsos, cálculos decimales, cursores y exportación de más registros que una página de la tabla. La verificación contra una cuenta Alpaca requiere tus claves paper.
-
-Referencia del proveedor: [historial de actividades y paginación de Alpaca](https://docs.alpaca.markets/us/reference/getaccountactivities-2) y [tipos de ejecuciones y cargos](https://docs.alpaca.markets/us/docs/account-activities).
+**Mi perfil** permite editar preferencias locales. **Notificaciones** incluye mensajes de esta sesión y contador de no leídas. El envío por correo, reportes mensuales, RBAC, inactividad y recuperación de contraseña aún no están implementados.
 
 > ### `Comandos disponibles`
 
-| Comando | Uso |
+| Comando | Función |
 | --- | --- |
-| `npm ci` | Instalar las versiones registradas en `package-lock.json` |
-| `npm run dev` | Iniciar frontend y API paper juntos para desarrollo |
-| `npm test` | Ejecutar las pruebas automáticas, sin enviar órdenes a Alpaca |
-| `npm run build` | Comprobar TypeScript y generar la carpeta `dist/` |
-| `npm start` | Servir `dist/` y la API paper local en http://127.0.0.1:3001/ |
-| `npm run preview` | Revisar únicamente el frontend compilado, sin la API paper |
+| `npm ci` | Instalar las versiones de `package-lock.json` |
+| `npm run dev` | Frontend y API de desarrollo |
+| `npm test` | Pruebas controladas sin órdenes externas |
+| `npm run build` | TypeScript y compilación a `dist/` |
+| `npm start` | Aplicación compilada y API local en [http://127.0.0.1:3001/](http://127.0.0.1:3001/) |
+| `npm run preview` | Solo frontend compilado; no incluye la API |
 
-Para ejecutar la compilación local completa:
+Para la compilación completa:
 
 ```sh
 npm ci
@@ -375,75 +214,84 @@ npm run build
 npm start
 ```
 
-Abre **http://127.0.0.1:3001/**, o el puerto configurado en `PORT`. Configura `.env` antes de ejecutar `npm start` si necesitas Alpaca. Cuando cambies código del frontend, vuelve a ejecutar `npm run build`.
+Para pnpm, los equivalentes son `corepack pnpm install` y `corepack pnpm dev`. Para reproducir el bloqueo incluido, usa npm de forma consistente.
 
-El proyecto también declara pnpm en `packageManager`. Si el equipo elige usarlo, los equivalentes son `corepack pnpm install` y `corepack pnpm dev`. Para seguir esta guía y reproducir el bloqueo incluido, utiliza npm de forma consistente.
+> ### `Estructura`
+
+```text
+public/soltech.svg         Marca provisional y favicon
+server/                   API local y adaptador Alpaca
+src/
+├── components/           Marca e iconos
+├── features/paper/       Cotizaciones y órdenes paper
+├── features/reports/     Historial y reportes
+├── pages/Onboarding.tsx  Registro y MFA de prototipo
+├── pages/Workspace.tsx   Espacio activo ajustado a v0.2
+├── pages/Dashboard.tsx   Vista anterior, sin uso en la entrada actual
+├── services/             Clientes y servicios; simulador anterior legado
+├── store/                Perfil y estado local
+├── styles/               Estilos responsivos
+├── types/                Contratos de datos
+└── utils/commission.mjs  Cálculo exacto compartido con el servidor
+    utils/reports.ts      Fechas, agregaciones y CSV
+tests/                    Lógica, API, reportes y alineación v0.2
+docs/                     Matriz de requisitos y brechas
+output/pdf/               Mockups documentales
+tmp/                      Intermedios locales excluidos de Git
+.env.example              Plantilla sin claves
+```
+
+> ### `API local`
+
+| Ruta | Función |
+| --- | --- |
+| `GET /api/paper/status` | Configuración sin secretos |
+| `GET /api/paper/quote?symbol=AAPL` | Quote y datos complementarios disponibles |
+| `GET /api/paper/snapshot` | Cuenta, posiciones, últimas 100 órdenes y reloj |
+| `GET /api/paper/activities?pageToken=…` | Ejecuciones y cargos paginados |
+| `POST /api/paper/orders` | Market o Limit, revisión de fondos y consentimiento de cola |
+| `POST /api/paper/cancel` | Solicitud de cancelación por identificador Soltech |
+| `GET /api/paper/order?clientOrderId=…` | Seguimiento y recuperación de orden |
+
+Las rutas son locales y requieren origen de localhost/127.0.0.1 para las mutaciones. Esto no sustituye autenticación ni autorización por usuario. No expongas la API en Internet antes de completar esos controles.
 
 > ### `Pruebas y validación`
 
-Desde la raíz del proyecto:
+La suite tiene **38 pruebas controladas** de lógica local legado, proveedor paper, comisión, half-up, Market/Limit, consentimiento de cola, cancelación, historial y CSV. Ejecuta `npm test` y `npm run build`.
 
-```sh
-npm test
-npm run build
-```
+Estas pruebas no envían órdenes a Alpaca, no certifican OTP real, no miden 1.500 usuarios concurrentes ni garantizan cobertura del 70 %. La prueba conectada requiere claves paper válidas. Las comprobaciones visuales del PDF no equivalen a una prueba automatizada del navegador.
 
-| Archivo | Cobertura |
-| --- | --- |
-| `tests/trading.test.mjs` | Compras, ventas, conservación del capital, precisión monetaria y límites del fondeo local |
-| `tests/alpaca.test.mjs` | Símbolos, fondos, reloj, restricciones de cuenta, duplicados, timeouts, ejecuciones parciales, respaldo y protección de origen |
-| `tests/reports.test.mjs` | Fechas de Bogotá, períodos, cargos y reembolsos, importes decimales, paginación, registros duplicados y exportación CSV |
+> ### `Protección del repositorio`
 
-La suite actual contiene **29 pruebas**. Las pruebas de proveedores utilizan respuestas controladas: no consumen fondos ni envían órdenes a Alpaca. La compilación comprueba TypeScript y genera `dist/`.
+`.gitignore` excluye `.env`, claves, dependencias, compilaciones, cachés, logs, temporales, configuraciones personales, exportaciones y estado local de herramientas. Conserva código, pruebas, `package-lock.json`, `.env.example`, documentación y recursos.
 
-La comprobación conectada necesita claves paper válidas y saldo. Para enviar una orden también se requiere mercado abierto. El objetivo de latencia se debe medir con esa conexión; las pruebas controladas no lo certifican.
-
-> ### `Archivos y protección del repositorio`
-
-El `.gitignore` excluye los archivos propios de cada máquina y los resultados generados:
-
-| Categoría | Ejemplos excluidos |
-| --- | --- |
-| Dependencias y cachés | `node_modules/`, almacenes de npm/pnpm/Yarn y cachés de herramientas |
-| Compilación y cobertura | `dist/`, `build/`, `coverage/` y `*.tsbuildinfo` |
-| Secretos | `.env`, variables locales, carpetas de secretos, credenciales y claves privadas |
-| Archivos locales | Logs, temporales, respaldos y perfiles de diagnóstico |
-| Editores y sistema operativo | `.idea/`, ajustes personales de VS Code, `.DS_Store` y `Thumbs.db` |
-| Pruebas y exportaciones | Resultados de navegador, `exports/` y `artifacts/` |
-| Herramientas de despliegue | Estado local de Vercel, Netlify y Wrangler |
-
-Se conservan el **código fuente**, las **pruebas**, **`package-lock.json`**, **`.env.example`**, recursos del proyecto y documentación. Cada compañero crea su propio `.env`; las claves no se comparten ni se suben a GitHub.
-
-Si un archivo ya estaba versionado, agregarlo al `.gitignore` no lo retira del historial. Revisa los cambios antes de subirlos y utiliza siempre plantillas sin secretos para la configuración compartida.
+Cada compañero configura sus claves. No subas datos personales, contraseñas ni credenciales. Un archivo ya versionado no desaparece del historial por agregarlo a `.gitignore`.
 
 > ### `Solución de problemas`
 
-| Problema | Qué revisar |
+| Problema | Solución |
 | --- | --- |
-| `node` o `npm` no se reconocen | Instala Node.js 24 y abre una terminal nueva. |
-| PowerShell bloquea `npm.ps1` | Usa `npm.cmd ci` y `npm.cmd run dev`; los demás comandos admiten el mismo reemplazo por `npm.cmd`. |
-| No encuentra `package.json` | Abre la terminal en la raíz del repositorio, no en `src/` ni en `server/`. |
-| `npm ci` informa que falta el archivo de bloqueo | Comprueba que descargaste el repositorio completo con `package-lock.json`. Si estás preparando el proyecto sin ese archivo, ejecuta `npm install`. |
-| La página no abre | Mantén `npm run dev` activo y copia la URL que imprime Vite. Verifica el puerto. |
-| Sigue apareciendo la pantalla para configurar Alpaca | Revisa el nombre `.env` (sin extensión `.txt`), su ubicación, ambas claves y reinicia el servidor. |
-| Alpaca rechaza las credenciales | Comprueba que sean de Paper Trading, que correspondan entre sí y que no estén revocadas. |
-| El feed devuelve un error de permisos | Usa `ALPACA_DATA_FEED=iex`, salvo que tengas acceso a SIP, y reinicia. |
-| El mercado está cerrado | Espera a la siguiente sesión indicada por la aplicación. La demo local sigue disponible. |
-| Cotización desactualizada o límite de consultas | Actualiza después de esperar; revisa la conexión y los permisos del proveedor. No se permite comprar con cotizaciones viejas. |
-| Fondos insuficientes | Revisa el efectivo paper y el poder de compra. La validación exige el estimado más un margen del 3 %. |
-| Una orden queda pendiente o la conexión falla | Conserva su identificador y consulta su estado en Alpaca. No repitas la compra: podría haber sido recibida. La aplicación continúa el seguimiento con el mismo identificador. |
-| La API no funciona con `npm run preview` | Usa `npm run dev`, o ejecuta `npm run build` seguido de `npm start`. |
-| `npm start` no encuentra archivos | Ejecuta primero `npm run build`. |
+| Node o npm no se reconocen | Instala Node.js 24 y abre una terminal nueva. |
+| PowerShell bloquea npm.ps1 | Usa `npm.cmd ci` y `npm.cmd run dev`. |
+| No encuentra package.json | Abre la terminal en la raíz del repositorio. |
+| No aparecen precios o importes | Configura las claves paper y revisa `/api/paper/status`; no se fabrican datos al faltar conexión. |
+| No reconoce las claves nuevas | Guarda `.env` y reinicia Vite. Verifica que el archivo no sea `.env.txt`. |
+| Alpaca rechaza credenciales o feed | Usa claves Paper correspondientes y `ALPACA_DATA_FEED=iex`, salvo permisos de SIP. |
+| Mercado cerrado | Confirma la cola si quieres enviar para la próxima apertura; no se opera en horario extendido. |
+| Fondos insuficientes | Incluye comisión estimada y margen de Market, no solo precio × cantidad. |
+| Orden pendiente o timeout | Conserva el identificador y consulta Alpaca; no dupliques la compra. |
+| No puedo cancelar | Solo se solicita cancelación de órdenes Soltech pendientes, sin llenado parcial. Alpaca confirma el resultado. |
+| Reporte incompleto | Continúa o reintenta la carga del historial antes de exportar. |
+| Premium no activa pagos | Checkout y webhooks están pendientes; solo existe vista previa de diseño. |
+| No funciona la API en preview | Usa `npm run dev` o `npm run build` y después `npm start`. |
 
-Para compartir el proyecto, sube el código, `package-lock.json` y `.env.example`. Cada compañero instala sus dependencias y configura sus propias claves. `.gitignore` excluye `.env`, `node_modules/` y `dist/`.
+> ### `Alcance pendiente`
 
-> ### `Alcance y pendientes`
+La entrega corrige el prototipo y documenta las brechas; **no declara cumplidos los 106 requisitos**. Faltan identidad y correo reales, sesiones y roles, cuentas/fondos Broker por usuario, base relacional ACID/3FN, reserva y cobro de comisiones, historial durable, Stripe, alertas, históricos, reportes de ganancias, administración y KPI, despliegue HTTPS/Docker y pruebas de carga.
 
-El registro no envía correos, no configura MFA real ni crea cuentas en Alpaca. En las secciones locales los precios siguen siendo fijos e ilustrativos; el gráfico mantiene el valor actual y el selector de período cambia el eje, sin representar un historial real. El fondeo local no modifica el saldo en Alpaca: ese saldo se administra desde la cuenta paper del proveedor.
+M7 Comisionistas y M12 Auditoría ampliada son **Could Have**. No se activan reparto 60/40, asesoría ni controles de cumplimiento fingidos. Internacionales, KYC/retiros reales, Bloomberg, WhatsApp, push móvil, cobros reales y operaciones apalancadas permanecen fuera del alcance documental.
 
-El backend local básico ya existe como apoyo a la simulación y a la conexión con Alpaca Paper. La autenticación, correo, MFA, creación de cuentas y fondeo reales requieren ampliar ese backend con sesiones, autorización y persistencia segura. Las claves secretas nunca deben ponerse en variables `VITE_*`, código del cliente ni `localStorage`.
-
-Los textos de términos y privacidad muestran información contextual de la demostración; deben reemplazarse por documentos legales definitivos antes de un lanzamiento real.
+Referencia técnica: [órdenes Alpaca](https://docs.alpaca.markets/us/docs/orders-at-alpaca), [snapshot de cotizaciones](https://docs.alpaca.markets/us/reference/stocksnapshotsingle) y [actividades](https://docs.alpaca.markets/us/reference/getaccountactivities-2).
 
 <div align="center">
 

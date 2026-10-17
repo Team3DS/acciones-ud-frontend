@@ -12,10 +12,18 @@ export function createApiHandler(broker = createBroker()) {
       if (req.method === 'GET' && url.pathname === '/api/paper/status') return send(200, { configured: broker.configured, feed: broker.feed, mode: 'paper' })
       if (req.method === 'GET' && url.pathname === '/api/paper/snapshot') return send(200, await broker.snapshot())
       if (req.method === 'GET' && url.pathname === '/api/paper/activities') return send(200, await broker.activities(url.searchParams.get('pageToken') || ''))
-      if (req.method === 'GET' && url.pathname === '/api/paper/quote') return send(200, await broker.quote(url.searchParams.get('symbol') || ''))
+      if (req.method === 'GET' && url.pathname === '/api/paper/quote') return send(200, await broker.quote(url.searchParams.get('symbol') || '',1400,true))
       if (req.method === 'GET' && url.pathname === '/api/paper/order') {
         const order = await broker.findOrder(url.searchParams.get('clientOrderId') || '')
         return send(order ? 200 : 404, order ? { order } : { message: 'Aún no hay confirmación de esa orden. No la envíes de nuevo.', code: 'ORDER_NOT_FOUND' })
+      }
+      if (req.method === 'POST' && url.pathname === '/api/paper/cancel') {
+        if (origin !== `http://${host}` || !req.headers['content-type']?.startsWith('application/json')) throw new ApiError(403, 'Se requiere una solicitud JSON del mismo origen.')
+        let body = ''
+        for await (const chunk of req) { body += chunk; if (body.length > 2048) throw new ApiError(413, 'Solicitud demasiado grande.') }
+        let input
+        try { input = JSON.parse(body) } catch { throw new ApiError(400, 'Solicitud JSON inválida.') }
+        return send(202, await broker.cancel(input.clientOrderId))
       }
       if (req.method === 'POST' && url.pathname === '/api/paper/orders') {
         if (origin !== `http://${host}` || !req.headers['content-type']?.startsWith('application/json')) throw new ApiError(403, 'Se requiere una solicitud JSON del mismo origen.')

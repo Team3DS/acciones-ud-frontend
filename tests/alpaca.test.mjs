@@ -30,11 +30,13 @@ function fixture(options = {}) {
     if (path === '/v2/account') return Response.json(account)
     if (path.startsWith('/v2/assets/')) return Response.json({ tradable: !options.untradable, status: 'active', class: 'us_equity', exchange: SYMBOLS[path.split('/').at(-1)] })
     if (path.endsWith('/quotes/latest')) return options.quoteError ? Response.json({}, { status: 429 }) : Response.json({ quote: { ap: 100, bp: 99.9, t: new Date(Date.now() - (options.stale ? 120000 : 0)).toISOString() } })
+    if (path.endsWith('/snapshot')) return Response.json({latestTrade:{p:100},dailyBar:{v:12500},prevDailyBar:{c:98}})
+    if (path === '/v2/orders/provider-order' && request.method === 'DELETE') { remoteOrder={...remoteOrder,status:'canceled',canceled_at:new Date().toISOString()};return new Response(null,{status:204}) }
     if (path === '/v2/orders' && request.method === 'POST') {
       if (options.timeout) throw new Error('Network timeout')
       if (options.reject) return Response.json({ message: 'do-not-expose-test-secret' }, { status: 422 })
       const body = JSON.parse(request.body)
-      remoteOrder = { id: 'provider-order', client_order_id: body.client_order_id, symbol: body.symbol, side: body.side, qty: body.qty, filled_qty: options.pending ? '0' : body.qty, filled_avg_price: options.pending ? null : '100.10', status: options.pending ? 'accepted' : 'filled', submitted_at: new Date().toISOString(), filled_at: options.pending ? null : new Date().toISOString() }
+      remoteOrder = { id: 'provider-order', client_order_id: body.client_order_id, symbol: body.symbol, side: body.side, qty: body.qty, type:body.type,limit_price:body.limit_price||null,time_in_force:body.time_in_force,filled_qty: options.pending ? '0' : body.qty, filled_avg_price: options.pending ? null : '100.10', status: options.pending ? 'accepted' : 'filled', submitted_at: new Date().toISOString(), filled_at: options.pending ? null : new Date().toISOString() }
       return Response.json(remoteOrder)
     }
     if (path === '/v2/positions') return Response.json(options.positions || (remoteOrder ? [{ symbol: 'AAPL', qty: '2', qty_available: '2', avg_entry_price: '100.1', current_price: '100.1', market_value: '200.2', unrealized_pl: '0' }] : []))
@@ -165,4 +167,39 @@ test('Sin claves muestra configuración pendiente y no consulta proveedores', as
   const result = await apiRequest(handler, { path: '/api/paper/snapshot' })
   assert.equal(result.status, 503)
   assert.equal(fetched, false)
+})
+
+test('RF-26: envía precio límite y vigencia sin inventar una ejecución',async()=>{
+  const {broker,calls}=fixture({pending:true,virtualClock:true})
+  const result=await broker.submit({...input,type:'limit',limitPrice:100,timeInForce:'gtc'})
+  assert.equal(result.order.status,'accepted');assert.equal(result.order.type,'limit')
+  const body=JSON.parse(calls.find(c=>c.request.method==='POST').request.body)
+  assert.equal(body.limit_price,'100.00');assert.equal(body.time_in_force,'gtc')
+})
+test('RF-13: mercado cerrado exige confirmación explícita para encolar en Alpaca',async()=>{
+  const {broker,calls}=fixture({open:false,pending:true,virtualClock:true})
+  await assert.rejects(broker.submit(input),err=>err.code==='MARKET_CLOSED')
+  assert.equal(calls.filter(c=>c.request.method==='POST').length,0)
+  const result=await broker.submit({...input,queueConfirmed:true})
+  assert.equal(result.order.status,'accepted');assert.notEqual(result.order.status,'filled')
+})
+test('RF-29: disponibilidad debe cubrir valor, comisión y margen Market',async()=>{
+  const {broker}=fixture({cash:'208'})
+  await assert.rejects(broker.submit(input),err=>err.code==='INSUFFICIENT_FUNDS')
+})
+test('RF-34: cancelación se solicita al proveedor y no se finge liberación de fondos',async()=>{
+  const {broker,calls}=fixture({pending:true,virtualClock:true})
+  await broker.submit({...input,type:'limit',limitPrice:100})
+  assert.equal((await broker.cancel(id)).requested,true)
+  assert.equal((await broker.findOrder(id)).status,'canceled')
+  assert.equal(calls.filter(c=>c.request.method==='DELETE').length,1)
+})
+test('RF-34: no cancela una orden ya ejecutada',async()=>{
+  const {broker}=fixture();await broker.submit(input)
+  await assert.rejects(broker.cancel(id),err=>err.status===409)
+})
+test('RF-17: último precio, spread y volumen provienen de snapshot; no inventa capitalización',async()=>{
+  const {broker}=fixture();const q=await broker.quote('AAPL',1400,true)
+  assert.equal(q.last,100);assert.equal(q.volume,12500);assert.equal(q.marketCap,null)
+  assert.ok(Math.abs(q.spread-.1)<.00001)
 })

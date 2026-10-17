@@ -1,5 +1,6 @@
 import type { Trade } from '@/types'
 import type { PaperActivity, ReportData, ReportFee, ReportTransaction } from '@/types/reports'
+import { tradeAmounts } from './commission.mjs'
 
 export const REPORT_TIMEZONE = 'America/Bogota'
 const SCALE = 1000000n
@@ -92,4 +93,11 @@ export function reportCsv(data: ReportData, start: string, end: string, source: 
   if (kind === 'transactions') return csvText([['Origen', 'Desde', 'Hasta', 'Moneda', 'Zona horaria', 'ID ejecución', 'ID orden', 'Fecha Bogotá', 'Fecha ejecución ISO', 'Activo', 'Operación', 'Cantidad', 'Precio USD', 'Importe bruto USD'], ...data.transactions.map(t => [...metadata, t.id, t.orderId, t.date, t.timestamp, t.symbol, t.side, t.quantity, t.price, decimalUSD(t.grossMicros)])])
   if (kind === 'fees') return csvText([['Origen', 'Desde', 'Hasta', 'Moneda', 'Zona horaria', 'ID cargo', 'ID orden', 'Fecha contable proveedor', 'Activo', 'Tipo', 'Descripción', 'Cargo USD', 'Reembolso USD', 'Impacto efectivo USD'], ...data.fees.map(f => [...metadata, f.id, f.orderId, f.date, f.symbol, f.type, f.description, decimalUSD(f.netMicros < 0n ? -f.netMicros : 0n), decimalUSD(f.netMicros > 0n ? f.netMicros : 0n), decimalUSD(f.netMicros)])])
   return csvText([['Origen', 'Desde', 'Hasta', 'Moneda', 'Zona horaria', 'Período', 'Ejecuciones', 'Compras USD', 'Ventas USD', 'Volumen USD', 'Cargos USD', 'Reembolsos USD', 'Cargos netos USD', 'Flujo neto USD'], ...groupReport(data, grouping).map(g => [...metadata, g.period, g.count, decimalUSD(g.purchases), decimalUSD(g.sales), decimalUSD(g.volume), decimalUSD(g.charges), decimalUSD(g.refunds), decimalUSD(g.netFees), decimalUSD(g.netCash)])])
+}
+
+export function platformCommissions(data: ReportData) {
+  return data.transactions.map(t => ({ ...t, ...tradeAmounts(decimalUSD(t.grossMicros), 1, 200, t.side === 'Compra' ? 'buy' : 'sell') }))
+}
+export function commissionCsv(data: ReportData, start: string, end: string, source: string, user: string) {
+  return csvText([['Origen','Usuario de prototipo','Desde','Hasta','ID ejecución','ID orden','Fecha Bogotá','Activo','Operación','Valor bruto USD','Tasa','Comisión estimada USD','Total compra / neto venta USD','Estado de cobro'], ...platformCommissions(data).map(t=>[source,user,start,end,t.id,t.orderId,t.date,t.symbol,t.side,t.gross.toFixed(2),'2 %',t.commission.toFixed(2),t.total.toFixed(2),'Estimación del prototipo; no cobrada'])])
 }

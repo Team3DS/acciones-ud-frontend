@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Icon } from '@/components/Icon'
 import { readAccount } from '@/store/account'
 import Onboarding from '@/pages/Onboarding'
-import Dashboard from '@/pages/Dashboard'
+import Dashboard from '@/pages/Workspace'
 
 export default function App() {
   const [account, setAccount] = useState(readAccount)

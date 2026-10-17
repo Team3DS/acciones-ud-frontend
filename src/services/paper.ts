@@ -20,7 +20,8 @@ export const paperApi = {
   activities: (pageToken = '') => request<ActivityPage>(`activities?pageToken=${encodeURIComponent(pageToken)}`),
   quote: (symbol: string) => request<PaperQuote>(`quote?symbol=${encodeURIComponent(symbol)}`),
   order: (clientOrderId: string) => request<{ order: PaperOrder }>(`order?clientOrderId=${encodeURIComponent(clientOrderId)}`),
-  submit: (input: { symbol: string; quantity: number; side: 'buy' | 'sell'; clientOrderId: string }) => request<PaperResult>('orders', { method: 'POST', body: JSON.stringify(input) }),
+  submit: (input: { symbol: string; quantity: number; side: 'buy' | 'sell'; clientOrderId: string; type?: 'market' | 'limit'; limitPrice?: number; timeInForce?: 'day' | 'gtc'; queueConfirmed?: boolean }) => request<PaperResult>('orders', { method: 'POST', body: JSON.stringify(input) }),
+  cancel: (clientOrderId: string) => request<{ requested: boolean; message: string }>('cancel', { method: 'POST', body: JSON.stringify({ clientOrderId }) }),
 }
 export const paperAssets = [
   { symbol: 'JNJ', name: 'Johnson & Johnson', exchange: 'NYSE' }, { symbol: 'JPM', name: 'JPMorgan Chase', exchange: 'NYSE' }, { symbol: 'XOM', name: 'Exxon Mobil', exchange: 'NYSE' },
