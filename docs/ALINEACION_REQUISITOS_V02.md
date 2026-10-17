@@ -30,7 +30,7 @@ El backend es una conexión local de desarrollo con una sola cuenta paper, no un
 | RF-05 | Control de acceso por roles (RBAC) | MUST HAVE | Pendiente | No hay RBAC real; vistas de administración y directivos solo propuestas en el PDF. |
 | RF-06 | Creación de cuenta de corretaje en Alpaca | MUST HAVE | Diseño / integración pendiente | Paso visual. No crea cuentas mediante Broker API ni vincula usuarios reales. |
 | RF-07 | Consulta de saldo y fondos disponibles | MUST HAVE | Parcial | Saldo y poder de compra del proveedor; faltan reservas propias por usuario. |
-| RF-08 | Fondeo simulado de la cuenta | MUST HAVE | Diseño / integración pendiente | Paso visual del fondeo; no modifica fondos en Alpaca. |
+| RF-08 | Fondeo simulado de la cuenta | MUST HAVE | Diseño / integración pendiente | Paso visual del fondeo y vista Fondos de práctica con diálogo de monto/revisión y proyección. Solo frontend: sin abono ni movimientos en Alpaca. |
 | RF-09 | Reserva y liberación de fondos | MUST HAVE | Diseño / integración pendiente | Alpaca gestiona sus reservas; no existe libro interno con comisión y usuario. |
 | RF-10 | Retiros bancarios y verificación de identidad (KYC/AML) reales | WON'T HAVE | Fuera de alcance | No se implementa en este ciclo. |
 | RF-11 | Catálogo de mercados y acciones | MUST HAVE | Parcial | Diez símbolos, USD, mercado y sector. Volumen depende del feed; capitalización no disponible. |
@@ -49,7 +49,7 @@ El backend es una conexión local de desarrollo con una sola cuenta paper, no un
 | RF-24 | Integración con Bloomberg API | WON'T HAVE | Fuera de alcance | No se implementa en este ciclo. |
 | RF-25 | Orden de mercado (compra y venta) | MUST HAVE | Parcial | Market con revisión y estimación de comisión; se muestra el precio ejecutado. Falta liquidación interna. |
 | RF-26 | Orden límite (Limit) | MUST HAVE | Parcial | Limit y DAY/GTC enviados al proveedor, sin motor de ejecuciones falso. Falta libro de reservas interno. |
-| RF-27 | Órdenes de protección: Stop Loss y Take Profit | SHOULD HAVE | Diseño / integración pendiente | Diseños Stop Loss / Take Profit; opciones deshabilitadas en la interfaz hasta integrar su ejecución. |
+| RF-27 | Órdenes de protección: Stop Loss y Take Profit | SHOULD HAVE | Diseño / integración pendiente | Vista navegable Órdenes de protección: formularios Stop Loss / Take Profit y diálogo de revisión con comisión estimada. Solo frontend; activación deshabilitada, sin validar tenencia ni enviar órdenes. |
 | RF-28 | Orden Trailing Stop | COULD HAVE | Pendiente | Solo con holgura y aprobación del alcance. |
 | RF-29 | Validación de reglas de compra y venta | MUST HAVE | Parcial | No se declara cumplimiento completo. Requiere implementación o verificación adicional. |
 | RF-30 | Cálculo de comisión parametrizable | MUST HAVE | Parcial | Cálculo half-up al 2 % y desglose. No se cobra ni se descuenta en Alpaca; falta configuración versionada por mercado. |

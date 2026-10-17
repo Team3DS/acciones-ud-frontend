@@ -285,6 +285,18 @@ Cada compañero configura sus claves. No subas datos personales, contraseñas ni
 | Premium no activa pagos | Checkout y webhooks están pendientes; solo existe vista previa de diseño. |
 | No funciona la API en preview | Usa `npm run dev` o `npm run build` y después `npm start`. |
 
+> ### `Vistas básicas de frontend`
+
+El menú del prototipo incluye tres vistas complementarias del mockup, disponibles incluso sin credenciales de Alpaca:
+
+| Vista | Recorrido disponible | Estado |
+| --- | --- | --- |
+| Fondos de práctica | Consulta de efectivo si existe conexión, monto de abono, importes rápidos y revisión del saldo proyectado | Solo frontend; no modifica saldos ni registra movimientos. |
+| Centro de ayuda | Guías con navegación a las pantallas, búsqueda y preguntas frecuentes desplegables | Frontend funcional. |
+| Órdenes de protección | Formularios Stop Loss y Take Profit, acción, cantidad, umbral, vigencia y revisión con comisión estimada | Solo diseño; no valida tenencia ni envía órdenes. |
+
+El botón **Agregar fondos**, en la cabecera, abre el diálogo de abono. Los diálogos pueden cerrarse con Escape o con el botón de cierre. Las confirmaciones que requieren integración permanecen deshabilitadas. No se agregaron endpoints ni funciones de backend para estas vistas. Administración y KPI siguen pendientes.
+
 > ### `Alcance pendiente`
 
 La entrega corrige el prototipo y documenta las brechas; **no declara cumplidos los 106 requisitos**. Faltan identidad y correo reales, sesiones y roles, cuentas/fondos Broker por usuario, base relacional ACID/3FN, reserva y cobro de comisiones, historial durable, Stripe, alertas, históricos, reportes de ganancias, administración y KPI, despliegue HTTPS/Docker y pruebas de carga.
