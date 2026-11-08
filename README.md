@@ -35,6 +35,8 @@ La cuenta de demostración se conserva en `localStorage` bajo la clave `soltech.
 
 El selector **Claro / Oscuro / Sistema** está disponible en el registro, la barra del panel y las preferencias del perfil. La selección se conserva en `acciones-ud.theme`, se sincroniza entre pestañas y se aplica antes de cargar React. Sistema sigue la apariencia del dispositivo.
 
+El resumen incluye una cinta de cotizaciones, un gráfico de línea o velas con períodos e inspección mediante cursor o teclado, mapa de calor con filtros, distribución del portafolio y actividad local. Las series del gráfico son ilustrativas y no modifican cotizaciones ni saldos. El botón de pausa detiene las animaciones; también se respeta la preferencia de movimiento reducido del dispositivo.
+
 ## Verificación
 
 ```bash
