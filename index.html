@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0c0c0e" />
+    <meta name="description" content="Acciones UD: aprende, practica e invierte con confianza. Tu espacio de inversión con fondos virtuales." />
+    <link rel="icon" type="image/svg+xml" href="./acciones-ud.svg" />
+    <title>Acciones UD · Tu próxima gran inversión</title>
+    <script>
+      (() => {
+        let theme = 'system';
+        try { theme = localStorage.getItem('acciones-ud.theme') || 'system'; } catch {}
+        const resolved = theme === 'light' || theme === 'dark' ? theme : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.style.colorScheme = resolved;
+        document.querySelector('meta[name="theme-color"]').content = resolved === 'dark' ? '#0c0c0e' : '#f8f6f0';
+        let language = '';
+        try { language = localStorage.getItem('acciones-ud.language') || ''; } catch {}
+        if (language !== 'es' && language !== 'en') language = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'es';
+        document.documentElement.lang = language;
+      })();
+    </script>
+  </head>
+  <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
+</html>
