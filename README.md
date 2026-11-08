@@ -39,6 +39,21 @@ El resumen incluye una cinta de cotizaciones, un gráfico de línea o velas con 
 
 La interfaz del dashboard usa textos de producto sin etiquetas de maqueta. La cinta se desplaza automáticamente con un control independiente para pausarla o reanudarla, incluso cuando el resto de la interfaz reduce el movimiento. Su desplazamiento no representa una actualización de precios ni una conexión a bolsas.
 
+## Idioma
+
+El selector **ES / EN** está junto al de apariencia en el registro, en la barra del panel y en las preferencias del perfil. La elección se conserva en `acciones-ud.language`, se sincroniza entre pestañas y actualiza el atributo `lang` del documento. En la primera visita se usa el idioma del navegador: inglés si el navegador está en inglés y español en cualquier otro caso.
+
+Los textos están en `src/i18n/es.json` y `src/i18n/en.json`, con las mismas claves en ambos archivos. Los componentes los leen con `useI18n()`:
+
+```tsx
+const { t, money, percent, date } = useI18n()
+t('stats.portfolioValue')            // Valor de tu portafolio · Portfolio value
+t('dash.tradeDone', { side, quantity, symbol })
+money(97021.85)                      // US$ 97.021,85 · $97,021.85
+```
+
+Para agregar un texto, crea la misma clave en los dos archivos. Los montos se muestran siempre en USD; solo cambia el formato de números y fechas. Los símbolos y nombres de las empresas no se traducen. Los archivos CSV conservan sus encabezados en español para mantener un formato estable.
+
 ## Verificación
 
 ```bash
@@ -47,7 +62,7 @@ npm run build
 npm run preview
 ```
 
-Las pruebas comprueban los cálculos locales, los filtros de fechas y las exportaciones. La compilación genera el sitio estático en `dist/`.
+Las pruebas comprueban los cálculos locales, los filtros de fechas, las exportaciones y que ambos idiomas tengan las mismas claves y variables. La compilación genera el sitio estático en `dist/`.
 
 ## Publicación estática
 
@@ -68,6 +83,7 @@ La base de Vite es relativa (`./`) para permitir alojar el resultado en una subc
 public/             Logo y archivos públicos
 src/components/     Componentes compartidos y selector de tema
 src/features/       Reportes y pantallas de demostración
+src/i18n/           Textos en español e inglés y selector de idioma
 src/pages/          Registro y panel principal
 src/services/       Catálogo ilustrativo y simulación en el navegador
 src/store/          Estado local de la cuenta

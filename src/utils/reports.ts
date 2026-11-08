@@ -17,7 +17,7 @@ export function decimalUSD(value: bigint, digits = 6) {
   const negative = value < 0n; const rounded = divideRounded(negative ? -value : value, 10n ** BigInt(6 - digits)); const unit = 10n ** BigInt(digits)
   return `${negative && rounded !== 0n ? '-' : ''}${rounded / unit}${digits ? `.${(rounded % unit).toString().padStart(digits, '0')}` : ''}`
 }
-export function formatUSD(value: bigint) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(Number(decimalUSD(value))) }
+export function formatUSD(value: bigint, locale = 'es-CO') { return new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 6 }).format(Number(decimalUSD(value))) }
 export function dateInBogota(value: string | Date) {
   const date = new Date(value)
   if (!Number.isFinite(date.getTime())) throw new Error('Fecha inválida en el historial.')
