@@ -14,7 +14,7 @@ export function ProfileScreen({ account, setAccount, notify }: { account: Accoun
       <div className="field-row"><label>{t('field.phone')}<input type="tel" value={account.profile.phone || ''} onChange={event => update('phone', event.target.value)}/></label><label>{t('field.level')}<select value={account.profile.level || 'Principiante'} onChange={event => update('level', event.target.value)}><option value="Principiante">{t('level.Principiante')}</option><option value="Experimentado">{t('level.Experimentado')}</option></select></label></div>
       <label>{t('pref.country')}<input value={account.profile.country} onChange={event => update('country', event.target.value)}/></label>
       <div className="demo-note">{t('pref.note')}</div>
-      <button className="button button-primary">{t('pref.save')}</button>
+      <button type="submit" className="button button-primary">{t('pref.save')}</button>
     </form>
     <div className="workspace-market"><strong>{t('theme.group')}</strong><ThemeSelector/></div>
     <div className="workspace-market"><strong>{t('language.group')}</strong><LanguageSelector/></div>
@@ -23,5 +23,5 @@ export function ProfileScreen({ account, setAccount, notify }: { account: Accoun
 
 export function PremiumScreen() {
   const { t } = useI18n()
-  return <article className="card"><div className="card-heading"><div><h3>{t('premium.title')}</h3><p>{t('premium.sub')}</p></div><span className="pill">{t('premium.demo')}</span></div><div className="workspace-plans">{(['monthly', 'annual'] as const).map(plan => <div key={plan}><strong>{t(`premium.${plan}`)}</strong><h2>{t(`premium.${plan}Price`)}</h2><p>{t('premium.desc')}</p><button className="button button-primary" disabled>{t('premium.sample')}</button></div>)}</div></article>
+  return <article className="card"><div className="card-heading"><div><h3>{t('premium.title')}</h3><p>{t('premium.sub')}</p></div><span className="pill">{t('premium.demo')}</span></div><div className="workspace-plans">{(['monthly', 'annual'] as const).map(plan => <div key={plan}><strong>{t(`premium.${plan}`)}</strong><h2>{t(`premium.${plan}Price`)}</h2><p>{t('premium.desc')}</p><button type="button" className="button button-primary" disabled>{t('premium.sample')}</button></div>)}</div></article>
 }

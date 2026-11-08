@@ -64,8 +64,8 @@ export default function Reports({ account, notify }: { account: Account; notify:
       ['rep.stat.count', String(totals.count)], ['rep.stat.purchases', usd(totals.purchases)], ['rep.stat.sales', usd(totals.sales)], ['rep.stat.net', usd(totals.netCash)],
     ].map(([label, value]) => <article className="stat-card" key={label}><div><span>{t(label)}</span><Icon name="chart" size={18}/></div><strong>{error ? '—' : value}</strong><p>{t('rep.stat.note')}</p></article>)}</div>
     <article className="card report-details">
-      <div className="card-heading"><div><h3>{t('rep.detail')}</h3><p>{period.start} → {period.end}</p></div><button className="button button-primary" disabled={Boolean(error)} onClick={download}>{t('rep.csv')} <Icon name="arrow" size={16}/></button></div>
-      <div className="report-tabs" role="tablist" aria-label={t('rep.tabsAria')}>{tabs.map(value => <button key={value} role="tab" id={`report-tab-${value}`} aria-controls="report-panel" aria-selected={tab === value} tabIndex={tab === value ? 0 : -1} onClick={() => { setTab(value); setPage(1) }} onKeyDown={event => {
+      <div className="card-heading"><div><h3>{t('rep.detail')}</h3><p>{period.start} → {period.end}</p></div><button type="button" className="button button-primary" disabled={Boolean(error)} onClick={download}>{t('rep.csv')} <Icon name="arrow" size={16}/></button></div>
+      <div className="report-tabs" role="tablist" aria-label={t('rep.tabsAria')}>{tabs.map(value => <button type="button" key={value} role="tab" id={`report-tab-${value}`} aria-controls="report-panel" aria-selected={tab === value} tabIndex={tab === value ? 0 : -1} onClick={() => { setTab(value); setPage(1) }} onKeyDown={event => {
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
         event.preventDefault()
         const index = tabs.indexOf(tab)
@@ -83,7 +83,7 @@ export default function Reports({ account, notify }: { account: Account; notify:
           </tbody>
         </table></div>
         {!count && <div className="empty-state"><Icon name="orders" size={26}/><strong>{error ? t('rep.checkDates') : t('rep.empty')}</strong><p>{t('rep.emptyText')}</p></div>}
-        <div className="report-pagination"><span>{t(count === 1 ? 'rep.recordsOne' : 'rep.recordsMany', { count })}</span><div><button className="small-button" disabled={currentPage <= 1} onClick={() => setPage(currentPage - 1)}>{t('rep.previous')}</button><span>{currentPage} / {pages}</span><button className="small-button" disabled={currentPage >= pages} onClick={() => setPage(currentPage + 1)}>{t('rep.next')}</button></div></div>
+        <div className="report-pagination"><span>{t(count === 1 ? 'rep.recordsOne' : 'rep.recordsMany', { count })}</span><div><button type="button" className="small-button" disabled={currentPage <= 1} onClick={() => setPage(currentPage - 1)}>{t('rep.previous')}</button><span>{currentPage} / {pages}</span><button type="button" className="small-button" disabled={currentPage >= pages} onClick={() => setPage(currentPage + 1)}>{t('rep.next')}</button></div></div>
       </div>
     </article>
     <div className="report-footnote"><Icon name="help" size={15}/><p>{t('rep.footnote')}</p></div>
