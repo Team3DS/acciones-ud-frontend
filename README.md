@@ -37,6 +37,8 @@ El selector **Claro / Oscuro / Sistema** está disponible en el registro, la bar
 
 El resumen incluye una cinta de cotizaciones, un gráfico de línea o velas con períodos e inspección mediante cursor o teclado, mapa de calor con filtros, distribución del portafolio y actividad local. Las series del gráfico son ilustrativas y no modifican cotizaciones ni saldos. El botón de pausa detiene las animaciones; también se respeta la preferencia de movimiento reducido del dispositivo.
 
+La interfaz del dashboard usa textos de producto sin etiquetas de maqueta. La cinta se desplaza automáticamente con un control independiente para pausarla o reanudarla, incluso cuando el resto de la interfaz reduce el movimiento. Su desplazamiento no representa una actualización de precios ni una conexión a bolsas.
+
 ## Verificación
 
 ```bash

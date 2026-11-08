@@ -4,7 +4,7 @@
 .ticker-label i, .demo-indicator i, .market-chart-footer > span i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 .ticker-label i { animation: market-pulse 2s ease-out infinite; }
 .ticker-window { min-width: 0; overflow: hidden; flex: 1; mask-image: linear-gradient(90deg, transparent, #000 18px, #000 calc(100% - 18px), transparent); }
-.ticker-track { display: flex; width: max-content; height: 100%; animation: market-tape 65s linear infinite; }
+.ticker-track { display: flex; width: max-content; height: 100%; animation: market-tape 38s linear infinite; }
 .ticker-copy { display: flex; flex-shrink: 0; height: 100%; }
 .ticker-copy button { display: flex; align-items: center; gap: 9px; padding: 0 19px; font-size: 10px; white-space: nowrap; }
 .ticker-copy button b { color: var(--ink); font-size: 10px; }
@@ -12,7 +12,7 @@
 .ticker-copy em { font-style: normal; font-size: 9px; }
 .ticker-pause { display: grid; place-items: center; width: 36px; flex-shrink: 0; color: var(--muted); border-left: 1px solid var(--border); }
 .ticker-pause:hover { color: var(--accent-bright); background: var(--accent-soft); }
-.market-ticker:hover .ticker-track, .market-ticker:focus-within .ticker-track { animation-play-state: paused; }
+.ticker-window:has(button:focus-visible) .ticker-track { animation-play-state: paused !important; }
 .dynamic-dashboard .dashboard-main { padding-top: 26px; }
 .overview-heading-actions { display: flex; align-items: center; gap: 10px; }
 .overview-heading-actions .button { min-height: 40px; font-size: 10px; padding: 0 14px; gap: 8px; white-space: nowrap; }
@@ -209,3 +209,7 @@
 @media (prefers-reduced-motion: reduce) {
   .dynamic-dashboard *, .dynamic-dashboard *:before, .dynamic-dashboard *:after { animation: none !important; transition: none !important; }
 }
+
+/* Pausing preserves the ticker position; the pause button does not stop a resumed track through focus. */
+.dynamic-dashboard .ticker-track { animation: market-tape 38s linear infinite !important; }
+.dynamic-dashboard[data-motion-paused='true'] .ticker-track { animation: market-tape 38s linear infinite !important; animation-play-state: paused !important; }
