@@ -1,5 +1,7 @@
 export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, React.ReactNode> = {
+    moon: <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>,
+    monitor: <><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></>,
     sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></>,
     grid: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
     wallet: <><path d="M20 7H5a2 2 0 0 1 0-4h13v4M3 5v14a2 2 0 0 0 2 2h15V7"/><path d="M20 11h-6v6h6m-3-3h.01"/></>,
@@ -22,4 +24,4 @@ export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   }
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name] || paths.grid}</svg>
 }
-export function Brand() { return <a className="brand" href="#" onClick={e => e.preventDefault()} aria-label="Soltech"><span className="brand-icon"><Icon name="sun" size={26}/></span>soltech<span className="brand-dot">.</span></a> }
+export function Brand() { return <a className="brand" href="#" onClick={e => e.preventDefault()} aria-label="Acciones UD"><img className="brand-mark" src={`${import.meta.env.BASE_URL}acciones-ud.svg`} alt=""/><span>Acciones <b>UD</b></span></a> }

@@ -1,15 +1,15 @@
 {
-  "name": "soltech",
+  "name": "acciones-ud-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@11.2.0",
+  "engines": { "node": ">=22.18.0" },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "preview": "vite preview",
-    "start": "node server/index.mjs"
+    "start": "vite"
   },
   "dependencies": {
     "react": "^19.3.0",

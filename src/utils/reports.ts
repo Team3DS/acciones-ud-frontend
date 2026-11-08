@@ -1,5 +1,5 @@
 import type { Trade } from '@/types'
-import type { PaperActivity, ReportData, ReportFee, ReportTransaction } from '@/types/reports'
+import type { ReportData } from '@/types/reports'
 import { tradeAmounts } from './commission.mjs'
 
 export const REPORT_TIMEZONE = 'America/Bogota'
@@ -42,26 +42,6 @@ export function presetPeriod(preset: string, now = new Date()) {
 export function localReport(trades: Trade[]): ReportData {
   return { transactions: trades.map(t => ({ id: t.id, orderId: t.id, symbol: t.symbol, date: dateInBogota(t.date), timestamp: t.date, side: t.side, quantity: String(t.quantity), price: String(t.price), grossMicros: productMicros(String(t.price), String(t.quantity)) })), fees: [], excluded: 0 }
 }
-export function activityReport(activities: PaperActivity[]): ReportData {
-  const transactions: ReportTransaction[] = []; const fees: ReportFee[] = []; const seen = new Set<string>(); let excluded = 0
-  for (const a of activities) {
-    if (seen.has(a.id)) continue
-    seen.add(a.id)
-    if (a.currency && a.currency !== 'USD') { excluded++; continue }
-    if (a.activity_type === 'FILL') {
-      if (!a.transaction_time || !a.symbol || !['buy', 'sell'].includes(a.side || '') || !a.price || !a.qty) throw new Error('Una ejecución de Alpaca no tiene todos sus campos. No se generará un reporte incompleto.')
-      const grossMicros = productMicros(a.price, a.qty)
-      if (grossMicros < 0n || decimal(a.qty).value <= 0n) throw new Error('Alpaca devolvió una cantidad o un precio inválido.')
-      transactions.push({ id: a.id, orderId: a.order_id || '', symbol: a.symbol, date: dateInBogota(a.transaction_time), timestamp: a.transaction_time, side: a.side === 'buy' ? 'Compra' : 'Venta', quantity: a.qty, price: a.price, grossMicros })
-    } else if (['FEE', 'DIVFEE', 'PTC', 'PTR'].includes(a.activity_type)) {
-      const date = a.date?.slice(0, 10)
-      if (!date || !validDate(date) || a.net_amount === undefined) throw new Error('Un cargo de Alpaca no tiene fecha o importe. No se generará un reporte incompleto.')
-      fees.push({ id: a.id, orderId: a.order_id || '', symbol: a.symbol || '', date, type: a.activity_type, description: a.description || feeLabel(a.activity_type), netMicros: usdMicros(a.net_amount) })
-    }
-  }
-  return { transactions, fees, excluded }
-}
-export function feeLabel(type: string) { return ({ FEE: 'Comisiones y cargos en USD', DIVFEE: 'Cargos por dividendos', PTC: 'Cargos trasladados', PTR: 'Reembolsos de cargos' } as Record<string, string>)[type] || type }
 export function filterReport(data: ReportData, start: string, end: string): ReportData {
   if (validatePeriod(start, end)) return { transactions: [], fees: [], excluded: data.excluded }
   return { transactions: data.transactions.filter(t => t.date >= start && t.date <= end).sort((a, b) => b.timestamp.localeCompare(a.timestamp)), fees: data.fees.filter(f => f.date >= start && f.date <= end).sort((a, b) => b.date.localeCompare(a.date)), excluded: data.excluded }

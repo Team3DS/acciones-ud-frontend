@@ -106,6 +106,17 @@ test-results/
 .vercel/
 .netlify/
 .wrangler/
+.openai/
+.codex/
+.agents/
+.aws/
+
+# Archivos personales y entregables ajenos al código fuente
+/output/
+/screenshots/
+*.zip
+*.7z
+*.rar
 
 # Los archivos de bloqueo (package-lock.json, pnpm-lock.yaml)
 # se conservan en Git para reproducir la instalación.
