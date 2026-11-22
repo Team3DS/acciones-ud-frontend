@@ -1,3 +1,4 @@
+import { OnboardingStory } from '@/components/OnboardingStory'
 import { ThemeSelector } from '@/components/ThemeSelector'
 import { useState, type Dispatch, type FormEvent, type SetStateAction } from 'react'
 import { Brand, Icon } from '@/components/Icon'
@@ -78,6 +79,6 @@ export default function Onboarding({ account, setAccount, notify }: Props) {
       </div>
       <footer className="onboarding-footer"><span>{t('common.footer')}</span><button type="button" onClick={() => notify(t('onb.helpNotice'))}><Icon name="help" size={15}/> {t('onb.help')}</button></footer>
     </section>
-    <aside className="story-panel"><div className="story-top"><span className="story-pill"><span/> {t('story.pill')}</span><span className="story-coordinate">{t('story.coordinate')}</span></div><div className="story-copy"><h2>{t('story.title1')}<br/>{t('story.title2')}<br/><span>{t('story.titleEm')}</span></h2><p>{t('story.copy1')}<br/>{t('story.copy2')}</p></div><div className="investment-scene" aria-hidden="true"><div className="investment-grid"/><svg className="investment-chart" viewBox="0 0 520 280" fill="none"><defs><linearGradient id="area-gold" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#D4AF37" stopOpacity=".3"/><stop offset="1" stopColor="#D4AF37" stopOpacity="0"/></linearGradient></defs><path d="M0 240 35 215 65 225 95 183 125 194 160 153 190 173 225 134 255 146 290 101 325 119 355 74 390 88 425 48 460 58 500 15V280H0Z" fill="url(#area-gold)"/><path d="M0 240 35 215 65 225 95 183 125 194 160 153 190 173 225 134 255 146 290 101 325 119 355 74 390 88 425 48 460 58 500 15" stroke="#E9C96A" strokeWidth="2.5" strokeLinejoin="round"/><circle cx="500" cy="15" r="5" fill="#F6E3A1"/></svg><div className="investment-logo"><img src={`${import.meta.env.BASE_URL}acciones-ud.svg`} alt=""/></div><div className="floating-note"><span className="note-icon"><Icon name="chart"/></span><div><span>{t('story.noteLabel')}</span><strong>{t('story.noteValue')}</strong></div><span>↗</span></div></div><div className="story-bottom"><div className="story-feature"><Icon name="shield" size={21}/><div><strong>{t('story.feature1')}</strong><span>{t('story.feature1Sub')}</span></div></div><div className="story-feature"><Icon name="chart" size={21}/><div><strong>{t('story.feature2')}</strong><span>{t('story.feature2Sub')}</span></div></div><div className="story-bottom-line"><span>{t('story.bottom')}</span><Icon name="sun" size={23}/></div></div></aside>
+    <OnboardingStory demo/>
   </div>
 }
