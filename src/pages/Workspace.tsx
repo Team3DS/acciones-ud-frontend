@@ -25,11 +25,23 @@ type Section = typeof navigation[number][1]
 
 export default function Workspace({ user, logout }: { user: UserInfo; logout: () => void }) {
   const { t } = useI18n()
-  const [section, setSection] = useState<Section>('overview')
+  // Stripe devuelve a /?billing=success|cancel (success-url y cancel-url de M10): se abre Premium y se limpia la dirección.
+  const [returning] = useState<'success' | 'cancel' | undefined>(() => {
+    const value = new URLSearchParams(window.location.search).get('billing')
+    return value === 'success' || value === 'cancel' ? value : undefined
+  })
+  const [section, setSection] = useState<Section>(returning ? 'premium' : 'overview')
   const [mobileNav, setMobileNav] = useState(false)
   const [revision, setRevision] = useState(0)
   const [draft, setDraft] = useState<OrderDraft | null>(null)
   const [notice, setNotice] = useState('')
+  useEffect(() => {
+    if (!returning) return
+    const url = new URL(window.location.href)
+    url.searchParams.delete('billing')
+    url.searchParams.delete('session_id')
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash)
+  }, [returning])
   const refresh = () => setRevision(value => value + 1)
   const profile = useResource<UserInfo>(import.meta.env.VITE_IDENTITY_CONTRACT === 'main' ? null : '/users/me', revision)
   const identity = profile.data ?? user
@@ -67,7 +79,7 @@ export default function Workspace({ user, logout }: { user: UserInfo; logout: ()
         {section === 'funds' && <Funds {...props} refresh={refresh} notify={setNotice}/>}
         {section === 'protection' && <Card title={t('ws.protect.title')}><p>{t('ws.protect.copy')}</p><button type="button" className="button button-primary" onClick={() => setDraft({ symbol: '', side: 'SELL', protection: true })}>{t('ws.protect.action')}</button></Card>}
         {section === 'notifications' && <div className="basic-screen"><Notifications revision={revision} refresh={refresh}/><PriceAlerts revision={revision} refresh={refresh}/></div>}
-        {section === 'premium' && <Billing revision={revision} refresh={refresh}/>}
+        {section === 'premium' && <Billing revision={revision} refresh={refresh} notify={setNotice} returning={returning}/>}
         {section === 'reports' && <ExecutionSummary revision={revision}/>}
         {section === 'profile' && <div className="basic-screen"><Card title={t('ws.profile.title')}><dl className="preview-breakdown">
           <div><dt>{t('ws.profile.name')}</dt><dd>{name}</dd></div><div><dt>{t('ws.profile.email')}</dt><dd>{identity.correo}</dd></div><div><dt>{t('ws.profile.status')}</dt><dd>{identity.estadoUsuario || '—'}</dd></div>

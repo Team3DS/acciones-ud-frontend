@@ -9,3 +9,10 @@
 .topbar-tools .language-selector { flex-shrink: 0; }
 .card-note { margin: 4px 0 14px; font-size: 11px; line-height: 1.5; color: var(--muted); }
 .card > label + .table-scroll, .card > label + .empty-state, .card > label + [role=status] { margin-top: 18px; }
+.billing-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.billing-actions span { font-size: 12px; }
+.plan-list { display: grid; gap: 16px; }
+.plan-option { padding: 18px; border: 1px solid var(--border); border-radius: 12px; }
+.card .plan-option h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: 0; text-transform: none; }
+.plan-option > p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+.plan-option .billing-actions + .card-note { margin-top: 12px; }

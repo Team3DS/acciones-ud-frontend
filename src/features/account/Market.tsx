@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Icon } from '@/components/Icon'
 import { useResource } from '@/hooks/useResource'
 import { useQuotes } from '@/hooks/useQuotes'
+import { useFavorites } from '@/hooks/useFavorites'
 import { useI18n } from '@/i18n/I18n'
 import { Card, Pager, Result, rows, Table, useFormat, type Listing } from './Resources'
 import type { OrderDraft } from './Orders'
@@ -71,18 +72,7 @@ export function Market({ userId, revision, favoritesOnly = false, overview = fal
   const [selected, setSelected] = useState('')
   const [paused, setPaused] = useState(false)
   const [filter, setFilter] = useState<typeof heatFilters[number]>('all')
-  const key = 'acciones-ud.favoritos.' + (import.meta.env.VITE_API_BASE_URL || '/api/v1') + '.' + userId
-  const [favorites, setFavorites] = useState<Instrument[]>(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(key) || '[]')
-      return Array.isArray(saved) ? saved.filter(x => typeof x?.symbol === 'string') : []
-    } catch { return [] }
-  })
-  function toggle(item: Instrument) {
-    const next = favorites.some(f => f.symbol === item.symbol) ? favorites.filter(f => f.symbol !== item.symbol) : [...favorites, item]
-    setFavorites(next)
-    try { localStorage.setItem(key, JSON.stringify(next)) } catch { /* Preferencia en memoria. */ }
-  }
+  const { favorites, toggle, mode: favoritesMode, error: favoritesError } = useFavorites(userId, revision)
   const [term, setTerm] = useState('')
   useEffect(() => { const timer = setTimeout(() => setTerm(search.trim()), 300); return () => clearTimeout(timer) }, [search])
   // M3 busca con `query` por coincidencia parcial en el símbolo o el nombre de la empresa; `symbol` exige el símbolo exacto.
@@ -126,6 +116,8 @@ export function Market({ userId, revision, favoritesOnly = false, overview = fal
   return <div className="basic-screen"><Card title={favoritesOnly ? t('mkt.myFavorites') : t('mkt.catalog')}>
     <label>{t('mkt.search')}<input type="search" value={search} placeholder={t('mkt.searchHint')} onChange={e => { setSearch(e.target.value); setSelected(''); setPage(0) }}/></label>
     {quotesError && <p className="form-error" role="alert">{t('mkt.quotesError', { error: quotesError })}</p>}
+    {favoritesOnly && favoritesMode !== 'loading' && <p className="card-note">{t(favoritesMode === 'server' ? 'fav.synced' : 'fav.local')}</p>}
+    {favoritesError && <p className="form-error" role="alert">{t('fav.error', { error: favoritesError })}</p>}
     {favoritesOnly ? table() : <Result resource={catalog}>{data => <>{table()}<Pager data={data} page={page} change={next => { setPage(next); setSelected('') }}/></>}</Result>}
     {liveNote}
   </Card>{current && <History key={current} symbol={current} revision={revision}/>}</div>

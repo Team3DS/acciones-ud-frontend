@@ -58,6 +58,8 @@ export function useFormat() {
   return {
     amount: (value: Amount, currency = 'USD') => amount(value, currency, locale),
     date: (value?: string) => date(value, locale),
+    /** Solo la fecha, sin hora (periodos de suscripción). */
+    day: (value?: string | null) => value && !Number.isNaN(Date.parse(value)) ? new Date(value).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) : '—',
     percent: (value: Amount) => value == null || value === '' || !Number.isFinite(Number(value)) ? '—' : percent(Number(value)),
   }
 }
