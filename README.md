@@ -18,7 +18,7 @@ Abre la dirección que muestra Vite. Las solicitudes del navegador a `/api/v1` p
 | `API_PROXY_TARGET` | Origen del gateway para el proxy de desarrollo y `npm run preview`. |
 | `VITE_API_BASE_URL` | Base REST incluida en la compilación. Por defecto, `/api/v1`. Para un gateway en otro origen, incluye el prefijo, por ejemplo `https://gateway.ejemplo.edu/api/v1`. |
 | `VITE_IDENTITY_CONTRACT` | Por defecto usa el registro v1.1 con `telefono` y `solicitaReporteMensual`. Usa `main` para el registro de M1 en la revisión `8ece707`, que recibe `celular`. |
-| `VITE_QUOTES_WS_URL` | Opcional. URL de transporte STOMP que publica el gateway. Para el endpoint SockJS de M4, indica la ruta que termina en `/websocket`. Sin esta variable, las vistas usan las cotizaciones REST al abrirse y al seleccionar **Actualizar**. |
+| `VITE_QUOTES_WS_URL` | Opcional. URL de transporte STOMP que publica el gateway, por ejemplo `/api/v1/market/ws/quotes/websocket`. Mientras no haya conexión, las vistas consultan las cotizaciones REST cada 15 segundos. Requiere que el gateway entregue a M4 la ruta `/market/ws/quotes`; hoy la reenvía con el prefijo `/api/v1`. |
 | `VITE_DEMO_MODE` | Con `true`, activa el prototipo local con sus datos de práctica. |
 
 ## Acceso y servicios
@@ -29,8 +29,8 @@ La sesión se conserva en `sessionStorage` por pestaña y gateway. Las peticione
 
 | Pantalla | Datos y operaciones |
 | --- | --- |
-| Resumen, mercado y favoritos | Catálogo paginado, precios, histórico, mapa del mercado y estado del mercado. Los favoritos son una preferencia del navegador asociada al usuario. |
-| Mis fondos | Efectivo disponible, reservado y total, movimientos paginados y retiros. Los administradores también pueden registrar depósitos. |
+| Resumen, mercado y favoritos | Catálogo paginado con búsqueda parcial por símbolo o empresa (`query` de M3), precios, histórico, mapa del mercado y estado del mercado. Sin WebSocket, los precios se consultan cada 15 segundos. Los favoritos son una preferencia del navegador asociada al usuario. |
+| Mis fondos | Efectivo disponible, reservado y total, movimientos paginados, depósitos de hasta USD 1.000.000 cada uno y retiros hasta el saldo disponible. Los montos se validan antes de enviarse a M2. |
 | Portafolio, órdenes y protección | Posiciones y valoración del usuario, envío de órdenes, consulta de estado, ejecuciones parciales y cancelación. Una orden aceptada se refleja con el estado informado por M5. |
 | Notificaciones y perfil | Perfil de Identidad, lectura de avisos, preferencias y alertas de precio. |
 | Premium y reportes | Planes, suscripción, enlace de Stripe Checkout, facturas y resumen de ejecuciones exportable en CSV. |

@@ -1,3 +1,11 @@
 .api-fields { padding: 0; border: 0; margin: 0; min-width: 0; }
 .api-price-chart { display: block; width: 100%; height: auto; min-height: 125px; margin: 20px 0; }
 .dashboard-main > .card { margin-bottom: 22px; }
+.quote-source { margin-top: 14px; font-size: 10px; color: var(--muted); }
+.market-state { display: block; font-size: 20px; margin-bottom: 6px; }
+.market-state-abierto { color: var(--positive); }
+.market-state-cerrado { color: var(--negative); }
+.card form .field-hint { display: block; margin: -6px 0 14px; }
+.topbar-tools .language-selector { flex-shrink: 0; }
+.card-note { margin: 4px 0 14px; font-size: 11px; line-height: 1.5; color: var(--muted); }
+.card > label + .table-scroll, .card > label + .empty-state, .card > label + [role=status] { margin-top: 18px; }

@@ -4,8 +4,10 @@ import { OnboardingStory } from '@/components/OnboardingStory'
 import { ThemeSelector } from '@/components/ThemeSelector'
 import { gateway } from '@/services/gateway'
 import { errorText, type Challenge } from '@/services/api'
+import { LanguageSelector, useI18n } from '@/i18n/I18n'
 
 export default function Access({ message, clearMessage }: { message: string; clearMessage: () => void }) {
+  const { t } = useI18n()
   const [step, setStep] = useState<'login' | 'register' | 'mfa'>('login')
   const [challenge, setChallenge] = useState<Challenge | null>(null)
   const [correo, setCorreo] = useState('')
@@ -40,7 +42,7 @@ export default function Access({ message, clearMessage }: { message: string; cle
         }, legacy)
         setCorreo(result.correo || correo.trim())
         setStep('login')
-        setNotice('Registro recibido. Revisa tu correo y luego inicia sesión.')
+        setNotice(t('acc.registered'))
       } else if (step === 'login') {
         const next = await gateway.login(correo.trim(), String(form.get('password')))
         if (next) { setChallenge(next); setStep('mfa') }
@@ -53,29 +55,29 @@ export default function Access({ message, clearMessage }: { message: string; cle
 
   return <div className="onboarding">
     <section className="onboarding-main">
-      <header className="onboarding-header"><Brand/><ThemeSelector/></header>
+      <header className="onboarding-header"><Brand/><div className="preference-controls"><ThemeSelector/><LanguageSelector/></div></header>
       <main className="onboarding-content">
         <form key={step} onSubmit={submit} className="onboarding-form">
-          <h1>{step === 'login' ? 'Inicia sesión' : step === 'register' ? 'Crea tu cuenta' : 'Verifica tu acceso'}</h1>
+          <h1>{t('acc.title.' + step)}</h1>
           {step === 'register' && <>
-            <div className="field-row"><label>Nombres<input name="nombres" autoComplete="given-name" required/></label><label>Apellidos<input name="apellidos" autoComplete="family-name" required/></label></div>
-            <div className="field-row"><label>Tipo de documento<select name="tipoDocumento">{['CC', 'CE', 'PASAPORTE', 'PPT'].map(x => <option key={x}>{x}</option>)}</select></label><label>Número de documento<input name="numeroDocumento" required/></label></div>
-            <label>Teléfono<input type="tel" autoComplete="tel" name="telefono" required/></label>
-            <label>Nivel de experiencia<select name="nivelInversionista"><option value="PRINCIPIANTE">Principiante</option><option value="EXPERIMENTADO">Experimentado</option></select></label>
-            {!legacy && <label className="checkbox-label"><input type="checkbox" name="reporte"/>Quiero recibir el reporte mensual.</label>}
+            <div className="field-row"><label>{t('acc.firstNames')}<input name="nombres" autoComplete="given-name" required/></label><label>{t('acc.lastNames')}<input name="apellidos" autoComplete="family-name" required/></label></div>
+            <div className="field-row"><label>{t('acc.docType')}<select name="tipoDocumento">{['CC', 'CE', 'PASAPORTE', 'PPT'].map(x => <option key={x}>{x}</option>)}</select></label><label>{t('acc.docNumber')}<input name="numeroDocumento" required/></label></div>
+            <label>{t('acc.phone')}<input type="tel" autoComplete="tel" name="telefono" required/></label>
+            <label>{t('acc.level')}<select name="nivelInversionista"><option value="PRINCIPIANTE">{t('level.Principiante')}</option><option value="EXPERIMENTADO">{t('level.Experimentado')}</option></select></label>
+            {!legacy && <label className="checkbox-label"><input type="checkbox" name="reporte"/>{t('acc.monthlyReport')}</label>}
           </>}
           {step !== 'mfa' ? <>
-            <label>Correo electrónico<input type="email" name="correo" value={correo} onChange={e => setCorreo(e.target.value)} autoComplete="email" required/></label>
-            <label>Contraseña<input type="password" name="password" required minLength={step === 'register' ? 8 : undefined} autoComplete={step === 'register' ? 'new-password' : 'current-password'}/></label>
+            <label>{t('acc.email')}<input type="email" name="correo" value={correo} onChange={e => setCorreo(e.target.value)} autoComplete="email" required/></label>
+            <label>{t('acc.password')}<input type="password" name="password" required minLength={step === 'register' ? 8 : undefined} autoComplete={step === 'register' ? 'new-password' : 'current-password'}/></label>
           </> : <>
-            <p className="intro">Ingresa el código de seis dígitos de {challenge?.correo}. Tiene una vigencia de cinco minutos.</p>
-            <label>Código de verificación<input className="code-input" name="code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" required autoFocus/></label>
+            <p className="intro">{t('acc.mfaIntro', { email: challenge?.correo ?? '' })}</p>
+            <label>{t('acc.code')}<input className="code-input" name="code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" required autoFocus/></label>
           </>}
           {(notice || message) && <p role="status" className="demo-note">{notice || message}</p>}
           {error && <p role="alert" className="form-error">{error}</p>}
-          <button disabled={busy} className="button button-primary full">{busy ? 'Enviando…' : step === 'login' ? 'Iniciar sesión' : step === 'register' ? 'Crear mi cuenta' : 'Verificar código'} <Icon name="arrow" size={17}/></button>
+          <button disabled={busy} className="button button-primary full">{busy ? t('api.sending') : t('acc.submit.' + step)} <Icon name="arrow" size={17}/></button>
           <button type="button" disabled={busy} className="demo-button" onClick={() => change(step === 'login' ? 'register' : 'login')}>
-            {step === 'login' ? 'Crear una cuenta' : 'Volver al inicio de sesión'}
+            {step === 'login' ? t('acc.toRegister') : t('acc.toLogin')}
           </button>
         </form>
       </main>
