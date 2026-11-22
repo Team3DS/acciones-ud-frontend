@@ -15,6 +15,10 @@
         document.documentElement.dataset.theme = resolved;
         document.documentElement.style.colorScheme = resolved;
         document.querySelector('meta[name="theme-color"]').content = resolved === 'dark' ? '#0c0c0e' : '#f8f6f0';
+        let language = '';
+        try { language = localStorage.getItem('acciones-ud.language') || ''; } catch {}
+        if (language !== 'es' && language !== 'en') language = (navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'es';
+        document.documentElement.lang = language;
       })();
     </script>
   </head>

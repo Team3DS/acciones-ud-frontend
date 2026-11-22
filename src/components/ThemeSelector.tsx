@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { Icon } from '@/components/Icon'
+import { useI18n } from '@/i18n/I18n'
 
 type Theme = 'light' | 'dark' | 'system'
 const storageKey = 'acciones-ud.theme'
@@ -32,9 +33,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function ThemeSelector() {
   const { theme, setTheme } = useContext(ThemeContext)
-  return <div className="theme-selector" role="group" aria-label="Apariencia">
-    {([['light', 'Claro', 'sun'], ['dark', 'Oscuro', 'moon'], ['system', 'Sistema', 'monitor']] as const).map(([value, label, icon]) =>
-      <button key={value} type="button" title={label} aria-label={`Tema ${label.toLowerCase()}`} aria-pressed={theme === value} onClick={() => setTheme(value)}><Icon name={icon} size={15}/><span>{label}</span></button>
+  const { t } = useI18n()
+  return <div className="theme-selector" role="group" aria-label={t('theme.group')}>
+    {([['light', 'sun'], ['dark', 'moon'], ['system', 'monitor']] as const).map(([value, icon]) => {
+      const label = t(`theme.${value}`)
+      return <button key={value} type="button" title={label} aria-label={t('theme.aria', { name: label.toLowerCase() })} aria-pressed={theme === value} onClick={() => setTheme(value)}><Icon name={icon} size={15}/><span>{label}</span></button>
+    }
     )}
   </div>
 }

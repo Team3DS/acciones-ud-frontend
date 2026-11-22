@@ -39,6 +39,21 @@ La sesión se conserva en `sessionStorage` por pestaña y gateway. Las peticione
 
 La implementación publicada en `main` del backend en la revisión `8ece707` difiere de la wiki en varios puntos. M1 genera el desafío MFA, pero esa revisión todavía requiere completar la entrega del código al usuario y la ruta `/users/me`. M4, M6 y M8 tienen implementaciones en ramas de funcionalidad. M5 y M10 todavía son esqueletos en esa revisión. El despliegue que sirve al frontend debe publicar los módulos correspondientes y enrutar también `/market/**` y `/billing/**` bajo `/api/v1`. Cada vista muestra los errores que devuelve su servicio. [Repositorio del backend](https://github.com/Team3DS/acciones-ud-backend)
 
+## Idioma
+
+El selector de idioma está junto al de apariencia en el acceso, en la barra del espacio de trabajo y en el registro del prototipo. La elección se conserva en `acciones-ud.language`, se sincroniza entre pestañas y actualiza el atributo `lang` del documento. En la primera visita se usa el idioma del navegador: inglés si el navegador está en inglés y español en cualquier otro caso.
+
+Los textos están en `src/i18n/es.json` y `src/i18n/en.json`, con las mismas claves en ambos archivos. Los componentes los leen con `useI18n()`:
+
+```tsx
+const { t, money, percent, date } = useI18n()
+t('stats.portfolioValue')            // Valor de tu portafolio · Portfolio value
+t('dash.tradeDone', { side, quantity, symbol })
+money(97021.85)                      // US$ 97.021,85 · $97,021.85
+```
+
+Para agregar un texto, crea la misma clave en los dos archivos. Los montos se muestran siempre en USD; solo cambia el formato de números y fechas. Los símbolos y nombres de las empresas no se traducen. Los archivos CSV conservan sus encabezados en español para mantener un formato estable.
+
 ## Pruebas y publicación
 
 ```bash
@@ -47,10 +62,29 @@ npm run build
 npm run preview
 ```
 
-Las pruebas del cliente HTTP cubren registro, MFA, errores del gateway, idempotencia, renovación concurrente y cierre de sesión. La suite conserva las pruebas de cálculos y reportes del prototipo.
+Las pruebas del cliente HTTP cubren registro, MFA, errores del gateway, idempotencia, renovación concurrente y cierre de sesión. La suite conserva las pruebas de cálculos y reportes del prototipo. También comprueban que ambos idiomas tengan las mismas claves y variables. La compilación genera el sitio estático en `dist/`.
 
 Publica el contenido de `dist/`. Para mantener la configuración predeterminada en producción, configura el servidor web para reenviar `/api/v1/**` al gateway antes de servir archivos estáticos. Si compilas con una URL absoluta, habilita en el gateway el origen del frontend y las cabeceras `Authorization`, `Content-Type`, `Idempotency-Key` y `X-Correlation-ID`. Las variables `VITE_*` se incorporan al cliente y deben contener únicamente configuración pública.
 
 ## Demostración local
 
 Para recorrer el prototipo anterior activa `VITE_DEMO_MODE=true` en `.env.local` y reinicia Vite. Conserva sus saldos, operaciones y recorrido de registro en `localStorage` bajo `soltech.account`. El modo conectado utiliza exclusivamente la sesión de Identidad y los datos de los servicios para la cuenta. El tema claro, oscuro o del sistema se conserva en ambos modos.
+
+## Contenido del repositorio
+
+```text
+public/             Logo y archivos públicos
+src/components/     Componentes compartidos y selectores de tema
+src/features/       Pantallas del modo conectado (account/) y del prototipo
+src/hooks/          Consultas a servicios y cotizaciones en tiempo real
+src/i18n/           Textos en español e inglés y selector de idioma
+src/pages/          Acceso, espacio de trabajo y prototipo
+src/services/       Cliente del gateway y datos del prototipo
+src/store/          Estado local del prototipo
+src/styles/         Estilos responsivos y temas
+src/types/          Tipos del frontend
+src/utils/          Cálculos y exportación de reportes
+tests/              Pruebas del cliente HTTP y de utilidades
+```
+
+`dist/` se genera al compilar y no se sube al repositorio. `package-lock.json` sí se conserva para reproducir la instalación.

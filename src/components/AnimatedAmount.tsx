@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { money } from '@/services/market'
+import { useI18n } from '@/i18n/I18n'
 
 export function AnimatedAmount({ value, paused = false }: { value: number; paused?: boolean }) {
+  const { money } = useI18n()
   const [display, setDisplay] = useState(value)
   const previous = useRef(value)
   useEffect(() => {

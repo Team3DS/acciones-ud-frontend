@@ -1,0 +1,17 @@
+.preference-controls { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.onboarding-header .preference-controls { margin-left: auto; }
+.onboarding-header .preference-controls .theme-selector { margin-left: 0; }
+.language-selector { align-items: center; }
+.language-selector .language-icon { display: inline-flex; align-items: center; padding: 0 4px 0 6px; color: var(--muted); }
+.language-selector button { font-weight: 600; letter-spacing: .04em; min-width: 32px; }
+.workspace-market + .workspace-market { margin-top: 12px; }
+@media (max-width: 960px) {
+  .onboarding-header .preference-controls { order: 3; margin-left: 0; }
+}
+@media (max-width: 700px) {
+  .onboarding-header .preference-controls { width: 100%; margin-top: 6px; flex-wrap: nowrap; }
+  .onboarding-header .preference-controls .theme-selector { width: auto; margin-top: 0; }
+  .onboarding-header .preference-controls .theme-selector:first-child { flex: 1; }
+  .topbar .language-selector .language-icon { display: none; }
+  .topbar .language-selector button { min-width: 0; }
+}

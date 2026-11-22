@@ -1,7 +1,9 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { Icon } from '@/components/Icon'
+import { useI18n } from '@/i18n/I18n'
 
 export default function PreviewDialog({ title, onClose, children, preview = true }: { title: string; onClose: () => void; children: ReactNode; preview?: boolean }) {
+  const { t } = useI18n()
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
@@ -17,8 +19,8 @@ export default function PreviewDialog({ title, onClose, children, preview = true
   }, [])
   return <dialog ref={dialog} className="preview-dialog" aria-labelledby="preview-dialog-title" onCancel={event => { event.preventDefault(); onClose() }} onClick={event => { if (event.target === event.currentTarget) onClose() }}>
     <div className="preview-dialog-content">
-      <button className="modal-close icon-button" aria-label="Cerrar ventana" onClick={onClose}><Icon name="close"/></button>
-      {preview && <span className="section-tag">ACCIONES UD · VISTA PREVIA</span>}
+      <button type="button" className="modal-close icon-button" aria-label={t('common.closeWindow')} onClick={onClose}><Icon name="close"/></button>
+      {preview && <span className="section-tag">{t('dialog.tag')}</span>}
       <h2 id="preview-dialog-title">{title}</h2>
       {children}
     </div>
