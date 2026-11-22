@@ -81,3 +81,15 @@ export function platformCommissions(data: ReportData) {
 export function commissionCsv(data: ReportData, start: string, end: string, source: string, user: string) {
   return csvText([['Origen','Usuario de prototipo','Desde','Hasta','ID ejecución','ID orden','Fecha Bogotá','Activo','Operación','Valor bruto USD','Tasa','Comisión estimada USD','Total compra / neto venta USD','Estado de cobro'], ...platformCommissions(data).map(t=>[source,user,start,end,t.id,t.orderId,t.date,t.symbol,t.side,t.gross.toFixed(2),'2 %',t.commission.toFixed(2),t.total.toFixed(2),'Estimación del prototipo; no cobrada'])])
 }
+
+export const REPORT_PERIODS = ['month', 'days30', 'year', 'all'] as const
+export type ReportPeriod = typeof REPORT_PERIODS[number]
+
+/** Rango del periodo en ISO-8601 para GET /executions/summary (from y to son opcionales en M5). */
+export function periodRange(period: ReportPeriod, now = new Date()): { from?: string; to?: string } {
+  const to = now.toISOString()
+  if (period === 'all') return {}
+  if (period === 'month') return { from: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString(), to }
+  if (period === 'year') return { from: new Date(Date.UTC(now.getUTCFullYear(), 0, 1)).toISOString(), to }
+  return { from: new Date(now.getTime() - 30 * 86400000).toISOString(), to }
+}
