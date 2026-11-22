@@ -67,6 +67,40 @@ Las pruebas del cliente HTTP cubren registro, MFA, errores del gateway, idempote
 
 Publica el contenido de `dist/`. Para mantener la configuración predeterminada en producción, configura el servidor web para reenviar `/api/v1/**` al gateway antes de servir archivos estáticos. Si compilas con una URL absoluta, habilita en el gateway el origen del frontend y las cabeceras `Authorization`, `Content-Type`, `Idempotency-Key` y `X-Correlation-ID`. Las variables `VITE_*` se incorporan al cliente y deben contener únicamente configuración pública.
 
+## Despliegue con Docker
+
+La imagen compila la app y la sirve con Nginx. Nginx también reenvía `/api/**` y el WebSocket de cotizaciones (`/api/v1/market/ws/**`) al gateway, así el navegador trabaja con un solo dominio y no hace falta CORS.
+
+```bash
+docker build -t acciones-ud-frontend .
+docker run -d --name frontend -p 80:80 -e GATEWAY_URL=http://gateway:8080 acciones-ud-frontend
+```
+
+| Variable | Momento | Valor por defecto | Uso |
+| --- | --- | --- | --- |
+| `GATEWAY_URL` | Arranque | `http://gateway:8080` | Dirección del gateway vista desde el contenedor, sin `/` final. |
+| `VITE_API_BASE_URL` | Compilación (`--build-arg`) | vacío → `/api/v1` | Solo si el gateway está en otro dominio. |
+| `VITE_QUOTES_WS_URL` | Compilación (`--build-arg`) | vacío → se deriva de la base | `off` desactiva el WebSocket. |
+
+Para el servidor, agrega el servicio al `docker-compose.yml` del backend, en la misma red del gateway:
+
+```yaml
+  frontend:
+    build: ../acciones-ud-frontend   # o la imagen ya construida
+    environment:
+      GATEWAY_URL: http://gateway:8080
+    depends_on:
+      - gateway
+    ports:
+      - "80:80"
+```
+
+`/healthz` responde `200` para el chequeo de salud. Las rutas que no son archivos devuelven `index.html` (por ejemplo, el regreso de Stripe a `/?billing=success`). Los archivos de `assets/` se guardan en caché un año porque su nombre cambia en cada compilación; `index.html` no se guarda en caché.
+
+Para HTTPS, pon delante un proxy de entrada (Caddy, Traefik o Nginx con Let's Encrypt) que termine TLS y reenvíe al puerto 80 de este contenedor. Este Nginx conserva la cabecera `X-Forwarded-Proto` que le envíe ese proxy. En Oracle Cloud abre los puertos 80 y 443 en la lista de seguridad de la VCN y en el firewall de la instancia (`iptables`/`firewalld`), y apunta el registro A del dominio a la IP pública.
+
+El flujo `ci-frontend.yml` ejecuta pruebas y compilación, construye la imagen, valida la configuración con `nginx -t` y prueba el contenedor.
+
 ## Demostración local
 
 Para recorrer el prototipo anterior activa `VITE_DEMO_MODE=true` en `.env.local` y reinicia Vite. Conserva sus saldos, operaciones y recorrido de registro en `localStorage` bajo `soltech.account`. El modo conectado utiliza exclusivamente la sesión de Identidad y los datos de los servicios para la cuenta. El tema claro, oscuro o del sistema se conserva en ambos modos.
