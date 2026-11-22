@@ -30,14 +30,15 @@ La sesión se conserva en `sessionStorage` por pestaña y gateway. Las peticione
 | Pantalla | Datos y operaciones |
 | --- | --- |
 | Resumen, mercado y favoritos | Catálogo paginado con búsqueda parcial por símbolo o empresa (`query` de M3), precios, histórico, mapa del mercado y estado del mercado. Sin WebSocket, los precios se consultan cada 15 segundos. Con Premium, los favoritos se guardan en la watchlist de M10 (`/watchlist`) y los del navegador se suben una vez; sin Premium se guardan en el navegador. |
+| Órdenes | Órdenes de mercado, límite, stop loss y take profit con el contrato de M5 (`ticker`, `lado`, `tipo`, `vigencia`, `cantidad`, `precioLimite`, `precioActivacion`). Listado con filtros por símbolo y estado, detalle con ejecuciones, cancelación y confirmación de encolamiento cuando el mercado está cerrado. |
 | Mis fondos | Efectivo disponible, reservado y total, movimientos paginados, depósitos de hasta USD 1.000.000 cada uno y retiros hasta el saldo disponible. Los montos se validan antes de enviarse a M2. |
 | Portafolio, órdenes y protección | Posiciones y valoración del usuario, envío de órdenes, consulta de estado, ejecuciones parciales y cancelación. Una orden aceptada se refleja con el estado informado por M5. |
 | Notificaciones y perfil | Perfil de Identidad, lectura de avisos, preferencias y alertas de precio. |
-| Premium y reportes | Planes de M10 (`/payments/plans`) con pago mensual o anual en Stripe Checkout, estado de la suscripción, cambio de intervalo, cancelación al final del periodo y recibos (`/payments/invoices`). Al volver de Stripe (`?billing=success`) la vista espera la confirmación del webhook. También incluye el resumen de ejecuciones exportable en CSV. |
+| Premium y reportes | Planes de M10 (`/payments/plans`) con pago mensual o anual en Stripe Checkout, estado de la suscripción, cambio de intervalo, cancelación al final del periodo y recibos (`/payments/invoices`). Al volver de Stripe (`?billing=success`) la vista espera la confirmación del webhook. Reportes muestra el resumen de M5 (`/executions/summary`: ganancia bruta realizada y comisiones de compra y venta) por periodo, exportable en CSV. |
 
 ### Compatibilidad del backend
 
-Estado de `main` del backend al 22/11/2026: M1 envía el código MFA por M8 y entrega los tokens tras `/auth/mfa/verify` (PR #24); el gateway enruta el WebSocket de M4 (PR #25); M2, M3, M4, M6 y M8 están publicados. M5 (PR #23) y M10 (PR #26) están en revisión. Mientras M10 no esté en `main`, Premium muestra el error del gateway y los favoritos se guardan en el navegador. Cada vista muestra los errores que devuelve su servicio. [Repositorio del backend](https://github.com/Team3DS/acciones-ud-backend)
+Estado de `main` del backend al 22/11/2026: M1 envía el código MFA por M8 y entrega los tokens tras `/auth/mfa/verify` (PR #24); el gateway enruta el WebSocket de M4 (PR #25); M2, M3, M4, M6 y M8 están publicados. M5 (PR #23, #27, #28) y M10 (PR #26) están publicados. Cada vista muestra los errores que devuelve su servicio. [Repositorio del backend](https://github.com/Team3DS/acciones-ud-backend)
 
 ## Idioma
 

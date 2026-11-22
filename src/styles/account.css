@@ -16,3 +16,7 @@
 .card .plan-option h3 { margin: 0 0 6px; font-size: 20px; letter-spacing: 0; text-transform: none; }
 .plan-option > p { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
 .plan-option .billing-actions + .card-note { margin-top: 12px; }
+.table-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.card-subtitle { margin: 18px 0 8px; font-size: 13px; }
+.trade-form .field-hint { display: block; margin: -4px 0 16px; font-size: 11px; color: var(--muted); }
+.card > .heat-filters + .table-scroll, .card > .heat-filters + [role=status], .card > .heat-filters + .form-error { margin-top: 16px; }

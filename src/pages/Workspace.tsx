@@ -7,7 +7,8 @@ import { useResource } from '@/hooks/useResource'
 import type { UserInfo } from '@/services/api'
 import { BalanceCard, Funds, PortfolioCard } from '@/features/account/Accounts'
 import { Market, MarketStatus } from '@/features/account/Market'
-import { OrderForm, Orders, type OrderDraft } from '@/features/account/Orders'
+import { OrderForm, Orders, type Order, type OrderDraft } from '@/features/account/Orders'
+import { needsQueueConfirmation } from '@/utils/orders'
 import { Notifications, Preferences, PriceAlerts } from '@/features/account/Notifications'
 import Billing from '@/features/account/Billing'
 import ExecutionSummary from '@/features/account/ExecutionSummary'
@@ -22,6 +23,14 @@ const navigation = [
   ['star', 'premium'], ['sun', 'profile'], ['orders', 'reports'], ['help', 'help'],
 ] as const
 type Section = typeof navigation[number][1]
+
+/** Aviso tras crear una orden según la respuesta de M5. */
+function orderNotice(order?: Order) {
+  if (!order) return 'ws.orderReceived'
+  if (needsQueueConfirmation(order)) return 'ord.queuedNotice'
+  if (order.status === 'RECHAZADA') return 'ord.rejectedNotice'
+  return 'ws.orderReceived'
+}
 
 export default function Workspace({ user, logout }: { user: UserInfo; logout: () => void }) {
   const { t } = useI18n()
@@ -90,7 +99,7 @@ export default function Workspace({ user, logout }: { user: UserInfo; logout: ()
         </div></Card>}
       </main>
     </div>
-    {draft && <PreviewDialog title={draft.protection ? t('ws.protect.dialog') : t('ws.newTrade')} preview={false} onClose={() => setDraft(null)}><OrderForm draft={draft} done={() => { setDraft(null); refresh(); navigate('orders'); setNotice(t('ws.orderReceived')) }}/></PreviewDialog>}
+    {draft && <PreviewDialog title={draft.protection ? t('ws.protect.dialog') : t('ws.newTrade')} preview={false} onClose={() => setDraft(null)}><OrderForm draft={draft} done={order => { setDraft(null); refresh(); navigate('orders'); setNotice(t(orderNotice(order))) }}/></PreviewDialog>}
     {notice && <div className="toast" role="status"><Icon name="check"/>{notice}</div>}
   </div>
 }

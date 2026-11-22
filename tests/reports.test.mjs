@@ -53,3 +53,12 @@ test('El CSV exporta todos los registros y protege fórmulas, comillas y saltos 
   assert.ok(csv.includes('"0.300000"'))
   assert.equal(csvText([['=HYPERLINK("bad")', 'a;b\nc', '-0.000120']]), '\ufeff"\'=HYPERLINK(""bad"")";"a;b\nc";"-0.000120"')
 })
+
+test('periodos del resumen de ejecuciones', async () => {
+  const { periodRange } = await import('../src/utils/reports.ts')
+  const now = new Date('2026-11-22T16:30:00Z')
+  assert.deepEqual(periodRange('all', now), {})
+  assert.deepEqual(periodRange('month', now), { from: '2026-11-01T00:00:00.000Z', to: '2026-11-22T16:30:00.000Z' })
+  assert.deepEqual(periodRange('year', now), { from: '2026-01-01T00:00:00.000Z', to: '2026-11-22T16:30:00.000Z' })
+  assert.equal(periodRange('days30', now).from, '2026-10-23T16:30:00.000Z')
+})
