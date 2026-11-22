@@ -18,7 +18,7 @@ Abre la dirección que muestra Vite. Las solicitudes del navegador a `/api/v1` p
 | `API_PROXY_TARGET` | Origen del gateway para el proxy de desarrollo y `npm run preview`. |
 | `VITE_API_BASE_URL` | Base REST incluida en la compilación. Por defecto, `/api/v1`. Para un gateway en otro origen, incluye el prefijo, por ejemplo `https://gateway.ejemplo.edu/api/v1`. |
 | `VITE_IDENTITY_CONTRACT` | Por defecto usa el registro v1.1 con `telefono` y `solicitaReporteMensual`. Usa `main` para el registro de M1 en la revisión `8ece707`, que recibe `celular`. |
-| `VITE_QUOTES_WS_URL` | Opcional. URL de transporte STOMP que publica el gateway, por ejemplo `/api/v1/market/ws/quotes/websocket`. Mientras no haya conexión, las vistas consultan las cotizaciones REST cada 15 segundos. Requiere que el gateway entregue a M4 la ruta `/market/ws/quotes`; hoy la reenvía con el prefijo `/api/v1`. |
+| `VITE_QUOTES_WS_URL` | Opcional. Por defecto el cliente se conecta a `<VITE_API_BASE_URL>/market/ws/quotes/websocket`, que el gateway entrega a M4. Indica otra URL para cambiarla o `off` para no abrir el WebSocket. Sin conexión, las vistas consultan las cotizaciones REST cada 15 segundos. |
 | `VITE_DEMO_MODE` | Con `true`, activa el prototipo local con sus datos de práctica. |
 
 ## Acceso y servicios

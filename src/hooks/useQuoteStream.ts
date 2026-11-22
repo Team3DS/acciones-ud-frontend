@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Client } from '@stomp/stompjs'
 import { gateway } from '@/services/gateway'
+import { quotesSocketUrl } from '@/services/quotesSocket'
 
 export interface Quote { symbol: string; price: number; changePct: number | null; timestamp: string }
 
@@ -11,14 +12,11 @@ export function useQuoteStream(symbols: string) {
   useEffect(() => {
     setUpdates(new Map())
     setLive(false)
-    const endpoint = import.meta.env.VITE_QUOTES_WS_URL
-    if (!symbols || !endpoint) return
-    const url = new URL(endpoint, window.location.href)
-    if (url.protocol === 'http:') url.protocol = 'ws:'
-    if (url.protocol === 'https:') url.protocol = 'wss:'
+    const brokerURL = quotesSocketUrl(import.meta.env.VITE_QUOTES_WS_URL, import.meta.env.VITE_API_BASE_URL, window.location.href)
+    if (!symbols || !brokerURL) return
     const wanted = new Set(symbols.split(','))
     let active = true
-    const client = new Client({ brokerURL: url.href, connectionTimeout: 6000, reconnectDelay: 10000 })
+    const client = new Client({ brokerURL, connectionTimeout: 6000, reconnectDelay: 10000 })
     client.beforeConnect = () => {
       const session = gateway.snapshot()
       if (session) client.connectHeaders = { Authorization: 'Bearer ' + session.accessToken, 'X-Correlation-ID': crypto.randomUUID() }
