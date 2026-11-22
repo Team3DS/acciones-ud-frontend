@@ -48,13 +48,13 @@ export default function Workspace({ user, logout }: { user: UserInfo; logout: ()
   }, [notice])
 
   return <div className="app-shell dynamic-dashboard">
-    {mobileNav && <button className="nav-backdrop" aria-label={t('nav.closeMenu')} onClick={() => setMobileNav(false)}/>}
+    {mobileNav && <button type="button" className="nav-backdrop" aria-label={t('nav.closeMenu')} onClick={() => setMobileNav(false)}/>}
     <aside className={'sidebar ' + (mobileNav ? 'mobile-open' : '')}><Brand/>
       <div className="account-switch"><span className="account-symbol"><Icon name="wallet"/></span><div><strong>{t('nav.account')}</strong><small>{user.id}</small></div></div>
       <nav>{navigation.map(([icon, id]) => <button type="button" key={id} className={section === id ? 'active' : ''} aria-current={section === id ? 'page' : undefined} onClick={() => navigate(id)}><Icon name={icon}/>{t('ws.nav.' + id)}</button>)}</nav>
       <div className="sidebar-bottom"><button type="button" onClick={logout}><Icon name="exit"/>{t('nav.logout')}</button><div className="sidebar-user"><span className="avatar">{name[0]?.toUpperCase()}</span><strong>{name}</strong></div></div>
     </aside>
-    <div className="main-shell"><header className="topbar"><div className="topbar-location"><button className="mobile-menu icon-button" aria-label={t('nav.openMenu')} onClick={() => setMobileNav(true)}><Icon name="menu"/></button><span>{t('top.mySpace')}</span><span className="breadcrumb-slash">/</span><strong>{title}</strong></div>
+    <div className="main-shell"><header className="topbar"><div className="topbar-location"><button type="button" className="mobile-menu icon-button" aria-label={t('nav.openMenu')} onClick={() => setMobileNav(true)}><Icon name="menu"/></button><span>{t('top.mySpace')}</span><span className="breadcrumb-slash">/</span><strong>{title}</strong></div>
       <div className="topbar-tools"><ThemeSelector/><LanguageSelector/><button type="button" className="icon-button" aria-label={unread.data?.count ? t('ws.unread', { count: unread.data.count }) : t('top.notifications')} onClick={() => navigate('notifications')}><Icon name="bell"/>{!!unread.data?.count && unread.data.count}</button><button type="button" className="avatar" aria-label={t('top.openProfile')} onClick={() => navigate('profile')}>{name[0]?.toUpperCase()}</button></div></header>
       <main className="dashboard-main"><div className="welcome-heading"><div><h1>{section === 'overview' && identity.nombres ? t('ws.hello', { name: identity.nombres }) : title}</h1></div>
         <div className="overview-heading-actions"><button type="button" className="button button-secondary" onClick={refresh}>{t('ws.refresh')}</button>

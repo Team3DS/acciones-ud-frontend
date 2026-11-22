@@ -16,7 +16,7 @@ export function Notifications({ revision, refresh }: Props) {
   return <Card title="Notificaciones"><label className="checkbox-label"><input type="checkbox" checked={unread} onChange={e => { setUnread(e.target.checked); setPage(0) }}/>Solo sin leer</label>
     <Result resource={notices}>{data => <>
       <Table headers={['Fecha', 'Asunto', 'Mensaje', 'Lectura']} empty="Sin notificaciones para esta consulta." values={rows(data).map(n => ({ key: n.id, cells: [
-        date(n.createdAt), n.title, n.message, n.readAt ? 'Leída' : <button className="small-button" disabled={action.busy} onClick={() => void action.run(async () => {
+        date(n.createdAt), n.title, n.message, n.readAt ? 'Leída' : <button type="button" className="small-button" disabled={action.busy} onClick={() => void action.run(async () => {
           await gateway.request('/notifications/' + n.id + '/read', { method: 'PATCH' }); refresh()
         })}>Marcar como leída</button>,
       ] }))}/><Pager data={data} page={page} change={setPage}/>
@@ -53,9 +53,9 @@ export function PriceAlerts({ revision, refresh }: Props) {
   }
   return <Card title="Alertas de precio">
     <form onSubmit={submit}><div className="field-row"><label>Símbolo<input name="symbol" required/></label><label>Condición<select name="condition"><option value="SUPERA">Supera</option><option value="CAE_BAJO">Cae por debajo de</option></select></label><label>Precio objetivo USD<input name="price" type="number" min="0.0001" step="0.0001" required/></label></div>
-      <button className="small-button" disabled={action.busy}>Crear alerta</button></form>
+      <button type="submit" className="small-button" disabled={action.busy}>Crear alerta</button></form>
     {action.error && <p className="form-error" role="alert">{action.error}</p>}
     <Result resource={alerts}>{data => <Table headers={['Acción', 'Condición', 'Objetivo', 'Estado']} empty="No tienes alertas de precio." values={data.map(a => ({ key: a.id, cells: [a.symbol, a.condition, amount(a.targetPrice), a.active ?
-      <button className="small-button" disabled={action.busy} onClick={() => void action.run(async () => { await gateway.request('/alerts/price/' + a.id, { method: 'DELETE' }); refresh() })}>Desactivar</button> : 'Desactivada'] }))}/>}</Result>
+      <button type="button" className="small-button" disabled={action.busy} onClick={() => void action.run(async () => { await gateway.request('/alerts/price/' + a.id, { method: 'DELETE' }); refresh() })}>Desactivar</button> : 'Desactivada'] }))}/>}</Result>
   </Card>
 }

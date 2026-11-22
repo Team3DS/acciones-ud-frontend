@@ -22,6 +22,6 @@ export default function ExecutionSummary({ revision }: { revision: number }) {
       setTimeout(() => URL.revokeObjectURL(url), 1000)
     }
     return <><Table headers={['Concepto', 'Valor']} empty="No hay métricas de ejecución disponibles." values={entries.map(([label, value]) => ({ key: label, cells: [label, value] }))}/>
-      {!!entries.length && <button className="button button-secondary" onClick={download}>Descargar CSV</button>}</>
+      {!!entries.length && <button type="button" className="button button-secondary" onClick={download}>Descargar CSV</button>}</>
   }}</Result></Card>
 }

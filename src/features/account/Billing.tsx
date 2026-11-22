@@ -25,7 +25,7 @@ export default function Billing({ revision, refresh }: { revision: number; refre
   const active = ['ACTIVA', 'ACTIVE', 'TRIALING'].includes(current.data?.estado ?? current.data?.status ?? '')
   const subscriptionId = current.data?.id ?? current.data?.subscriptionId
   return <div className="basic-screen"><Card title="Mi suscripción"><Result resource={current}>{s => <div className="workspace-market"><strong>{s.estado ?? s.status}</strong>
-    {subscriptionId != null && active && <button disabled={action.busy} className="small-button" onClick={() => void action.run(async () => {
+    {subscriptionId != null && active && <button type="button" disabled={action.busy} className="small-button" onClick={() => void action.run(async () => {
       await gateway.request('/subscriptions/' + subscriptionId + '/cancel', { method: 'POST' }); refresh()
     })}>Cancelar suscripción</button>}</div>}</Result></Card>
     <Card title="Planes"><Result resource={plans}>{data =>
@@ -33,7 +33,7 @@ export default function Billing({ revision, refresh }: { revision: number; refre
         const id = p.id ?? p.planId
         const code = p.codigo ?? p.code
         return { key: id ?? code ?? index, cells: [p.nombre ?? p.name ?? code, p.descripcion ?? p.description, amount(p.precioMensual ?? p.monthlyPrice, p.moneda ?? p.currency),
-          code === 'FREE' ? 'Gratis' : id == null ? '—' : <button className="small-button" disabled={action.busy || active && id === current.data?.planId} onClick={() => checkout(id)}>Continuar a Stripe</button>] }
+          code === 'FREE' ? 'Gratis' : id == null ? '—' : <button type="button" className="small-button" disabled={action.busy || active && id === current.data?.planId} onClick={() => checkout(id)}>Continuar a Stripe</button>] }
       })}/>
     }</Result></Card>{action.error && <p className="form-error" role="alert">{action.error}</p>}
     <Card title="Facturas"><Result resource={invoices}>{data => <Table headers={['Factura', 'Emisión', 'Importe', 'Estado']} empty="Aún no tienes facturas." values={rows(data).map((i, index) => ({ key: i.id ?? i.invoiceId ?? index, cells: [i.id ?? i.invoiceId, date(i.fechaEmision ?? i.issuedAt), amount(i.monto ?? i.amount, i.moneda ?? i.currency), i.estado ?? i.status] }))}/>}</Result></Card>

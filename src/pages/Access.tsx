@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Brand, Icon } from '@/components/Icon'
 import { OnboardingStory } from '@/components/OnboardingStory'
 import { ThemeSelector } from '@/components/ThemeSelector'
@@ -15,6 +15,9 @@ export default function Access({ message, clearMessage }: { message: string; cle
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
   const legacy = import.meta.env.VITE_IDENTITY_CONTRACT === 'main'
+  const codeInput = useRef<HTMLInputElement>(null)
+  // Lleva el foco al código al abrir el paso MFA sin usar autoFocus.
+  useEffect(() => { if (step === 'mfa') codeInput.current?.focus() }, [step])
 
   function change(next: typeof step) {
     setChallenge(null)
@@ -71,11 +74,11 @@ export default function Access({ message, clearMessage }: { message: string; cle
             <label>{t('acc.password')}<input type="password" name="password" required minLength={step === 'register' ? 8 : undefined} autoComplete={step === 'register' ? 'new-password' : 'current-password'}/></label>
           </> : <>
             <p className="intro">{t('acc.mfaIntro', { email: challenge?.correo ?? '' })}</p>
-            <label>{t('acc.code')}<input className="code-input" name="code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" required autoFocus/></label>
+            <label>{t('acc.code')}<input className="code-input" name="code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" required ref={codeInput}/></label>
           </>}
           {(notice || message) && <p role="status" className="demo-note">{notice || message}</p>}
           {error && <p role="alert" className="form-error">{error}</p>}
-          <button disabled={busy} className="button button-primary full">{busy ? t('api.sending') : t('acc.submit.' + step)} <Icon name="arrow" size={17}/></button>
+          <button type="submit" disabled={busy} className="button button-primary full">{busy ? t('api.sending') : t('acc.submit.' + step)} <Icon name="arrow" size={17}/></button>
           <button type="button" disabled={busy} className="demo-button" onClick={() => change(step === 'login' ? 'register' : 'login')}>
             {step === 'login' ? t('acc.toRegister') : t('acc.toLogin')}
           </button>

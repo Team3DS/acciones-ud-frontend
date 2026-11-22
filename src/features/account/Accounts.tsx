@@ -71,7 +71,7 @@ export function Funds({ userId, revision, refresh, notify }: Props & { refresh: 
         <small id="funds-hint" className="field-hint">{operation === 'deposits' ? t('funds.depositHint', { max: amount(MAX_DEPOSIT) }) : t('funds.withdrawalHint', { available: amount(balance.data?.available) })}</small>
         <label>{t('funds.description')}<input name="description" maxLength={500} autoComplete="off"/></label>
         {(invalid || action.error) && <p className="form-error" role="alert">{invalid || action.error}</p>}
-        <button className="button button-primary" disabled={action.busy}>{action.busy ? t('api.sending') : operation === 'deposits' ? t('funds.depositAction') : t('funds.withdrawalAction')}</button>
+        <button type="submit" className="button button-primary" disabled={action.busy}>{action.busy ? t('api.sending') : operation === 'deposits' ? t('funds.depositAction') : t('funds.withdrawalAction')}</button>
       </form></Card>
     </div>
     <Card title={t('funds.history')}><Result resource={movements}>{data => <>

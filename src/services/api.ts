@@ -63,7 +63,9 @@ export class Gateway {
   private pendingKeys = new Map<string, string>()
 
   constructor(base: string, storage?: Storage) {
-    this.base = base.replace(/\/+$/, '')
+    let trimmed = base
+    while (trimmed.endsWith('/')) trimmed = trimmed.slice(0, -1)
+    this.base = trimmed
     this.sessionKey = 'acciones-ud.session.v1.' + this.base
     this.storage = storage
     try {

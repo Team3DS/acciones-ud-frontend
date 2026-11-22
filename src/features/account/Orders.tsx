@@ -37,7 +37,7 @@ export function OrderForm({ draft, done }: { draft: OrderDraft; done: () => void
       {type !== 'MARKET' && <label>{type === 'STOP' ? 'Precio de activación' : 'Precio límite'} en USD<input name="threshold" type="number" min="0.0001" step="0.0001" required/></label>}
       <label>Vigencia<select name="timeInForce"><option value="DAY">Día</option><option value="GTC">Hasta cancelación</option></select></label>
       {action.error && <p className="form-error" role="alert">{action.error}</p>}
-      <button className="button button-primary full">{action.busy ? 'Enviando…' : 'Enviar orden'}</button>
+      <button type="submit" className="button button-primary full">{action.busy ? 'Enviando…' : 'Enviar orden'}</button>
     </fieldset>
   </form>
 }
@@ -58,8 +58,8 @@ export function Orders({ revision, refresh, notify }: { revision: number; refres
       <Table headers={['Acción', 'Operación', 'Cantidad', 'Estado', 'Fecha', 'Detalle', 'Cancelar']} empty="Sin órdenes para esta consulta." values={rows(data).map(order => {
         const id = order.orderId ?? order.id
         return { key: id ?? order.symbol, cells: [order.symbol, order.side === 'BUY' ? 'Compra' : order.side === 'SELL' ? 'Venta' : order.side, order.qty, status(order), date(order.createdAt ?? order.creadoEn),
-          <button className="small-button" disabled={id == null} onClick={() => setSelected(id)}>Ejecuciones</button>,
-          id != null && active.includes(status(order)) ? <button className="small-button" disabled={action.busy} onClick={() => {
+          <button type="button" className="small-button" disabled={id == null} onClick={() => setSelected(id)}>Ejecuciones</button>,
+          id != null && active.includes(status(order)) ? <button type="button" className="small-button" disabled={action.busy} onClick={() => {
             void action.run(async () => { await gateway.request('/orders/' + id + '/cancel', { method: 'POST' }); refresh(); notify('Cancelación solicitada.') })
           }}>Cancelar orden</button> : '—'] }
       })}/>
