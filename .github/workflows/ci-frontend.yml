@@ -1,0 +1,39 @@
+name: Frontend CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-build:
+    name: Pruebas y compilación
+    runs-on: ubuntu-24.04
+    container: node:22-bookworm
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    name: Imagen Docker y Nginx
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - name: Construir la imagen
+        run: docker build -t acciones-ud-frontend:ci .
+      - name: Validar la configuración de Nginx
+        run: docker run --rm -e GATEWAY_URL=http://127.0.0.1:9 acciones-ud-frontend:ci nginx -t
+      - name: Servir la app y la ruta de salud
+        run: |
+          docker run -d --name front -p 8088:8080 -e GATEWAY_URL=http://127.0.0.1:9 acciones-ud-frontend:ci
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8088/healthz && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8088/ | grep -q '<div id="root">'
+          curl -fsS http://127.0.0.1:8088/?billing=success | grep -q '<div id="root">'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8088/api/v1/market/status)" = "502"
+          docker rm -f front

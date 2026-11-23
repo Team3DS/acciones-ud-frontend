@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.github
+coverage
+tests
+*.bundle
+*.patch
+.env
+.env.*
+!.env.example
