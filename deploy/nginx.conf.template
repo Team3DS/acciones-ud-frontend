@@ -1,5 +1,5 @@
 # Plantilla de Nginx para el frontend. ${GATEWAY_URL} se reemplaza al arrancar el contenedor.
-# El HTTPS lo termina el proxy de entrada (ver README, sección Despliegue); aquí se escucha en el puerto 80.
+# El HTTPS lo termina el proxy de entrada (ver README, sección Despliegue); aquí se escucha en el puerto 8080 (Nginx sin root).
 
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -13,7 +13,7 @@ map $http_x_forwarded_proto $forwarded_proto {
 }
 
 server {
-    listen 80;
+    listen 8080;
     server_name _;
     root /usr/share/nginx/html;
     server_tokens off;

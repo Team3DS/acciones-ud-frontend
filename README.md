@@ -73,7 +73,7 @@ La imagen compila la app y la sirve con Nginx. Nginx también reenvía `/api/**`
 
 ```bash
 docker build -t acciones-ud-frontend .
-docker run -d --name frontend -p 80:80 -e GATEWAY_URL=http://gateway:8080 acciones-ud-frontend
+docker run -d --name frontend -p 80:8080 -e GATEWAY_URL=http://gateway:8080 acciones-ud-frontend
 ```
 
 | Variable | Momento | Valor por defecto | Uso |
@@ -92,12 +92,12 @@ Para el servidor, agrega el servicio al `docker-compose.yml` del backend, en la 
     depends_on:
       - gateway
     ports:
-      - "80:80"
+      - "80:8080"
 ```
 
 `/healthz` responde `200` para el chequeo de salud. Las rutas que no son archivos devuelven `index.html` (por ejemplo, el regreso de Stripe a `/?billing=success`). Los archivos de `assets/` se guardan en caché un año porque su nombre cambia en cada compilación; `index.html` no se guarda en caché.
 
-Para HTTPS, pon delante un proxy de entrada (Caddy, Traefik o Nginx con Let's Encrypt) que termine TLS y reenvíe al puerto 80 de este contenedor. Este Nginx conserva la cabecera `X-Forwarded-Proto` que le envíe ese proxy. En Oracle Cloud abre los puertos 80 y 443 en la lista de seguridad de la VCN y en el firewall de la instancia (`iptables`/`firewalld`), y apunta el registro A del dominio a la IP pública.
+Para HTTPS, pon delante un proxy de entrada (Caddy, Traefik o Nginx con Let's Encrypt) que termine TLS y reenvíe al puerto 8080 de este contenedor (Nginx corre sin root, por eso no usa el 80). Este Nginx conserva la cabecera `X-Forwarded-Proto` que le envíe ese proxy. En Oracle Cloud abre los puertos 80 y 443 en la lista de seguridad de la VCN y en el firewall de la instancia (`iptables`/`firewalld`), y apunta el registro A del dominio a la IP pública.
 
 El flujo `ci-frontend.yml` ejecuta pruebas y compilación, construye la imagen, valida la configuración con `nginx -t` y prueba el contenedor.
 
