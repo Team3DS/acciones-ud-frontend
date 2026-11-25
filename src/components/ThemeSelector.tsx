@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const resolved = theme === 'system' ? media.matches ? 'dark' : 'light' : theme
       document.documentElement.dataset.theme = resolved
       document.documentElement.style.colorScheme = resolved
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'dark' ? '#0c0c0e' : '#f8f6f0')
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'dark' ? '#0c0c0e' : '#f4f7fc')
     }
     apply()
     try { localStorage.setItem(storageKey, theme) } catch { /* The choice still works for this session. */ }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 741 494">
+  <path fill="#fff" d="M0 0h741v494H0z"/>
+  <path stroke="#B22234" stroke-width="38" d="M0 19h741M0 95h741M0 171h741M0 247h741M0 323h741M0 399h741M0 475h741"/>
+  <path fill="#3C3B6E" d="M0 0h296.4v266H0z"/>
+  <defs>
+    <path id="star" fill="#fff" d="m0-11.4 2.56 7.88h8.29L4.14 1.34l2.56 7.88L0 4.35l-6.7 4.87 2.56-7.88-6.71-4.86h8.29z"/>
+    <g id="six"><use href="#star" x="24.7"/><use href="#star" x="74.1"/><use href="#star" x="123.5"/><use href="#star" x="172.9"/><use href="#star" x="222.3"/><use href="#star" x="271.7"/></g>
+    <g id="five"><use href="#star" x="49.4"/><use href="#star" x="98.8"/><use href="#star" x="148.2"/><use href="#star" x="197.6"/><use href="#star" x="247"/></g>
+  </defs>
+  <use href="#six" y="26.6"/><use href="#five" y="53.2"/><use href="#six" y="79.8"/><use href="#five" y="106.4"/><use href="#six" y="133"/><use href="#five" y="159.6"/><use href="#six" y="186.2"/><use href="#five" y="212.8"/><use href="#six" y="239.4"/>
+</svg>

@@ -9,9 +9,9 @@ type Vars = Record<string, string | number>
 
 const messages: Record<Language, Messages> = { es, en }
 const locales: Record<Language, string> = { es: 'es-CO', en: 'en-US' }
-export const languages: { code: Language; short: string; name: string }[] = [
-  { code: 'es', short: 'ES', name: 'Español' },
-  { code: 'en', short: 'EN', name: 'English' },
+export const languages: { code: Language; flag: string; name: string }[] = [
+  { code: 'es', flag: 'co', name: 'Español' },
+  { code: 'en', flag: 'us', name: 'English' },
 ]
 const storageKey = 'acciones-ud.language'
 // Mensajes de los servicios y utilidades que se muestran tal cual al usuario.
@@ -83,7 +83,7 @@ export function LanguageSelector() {
   return <div className="theme-selector language-selector" role="group" aria-label={t('language.group')}>
     <span className="language-icon" aria-hidden="true"><Icon name="globe" size={14}/></span>
     {languages.map(item =>
-      <button key={item.code} type="button" lang={item.code} title={item.name} aria-label={t('language.aria', { name: item.name })} aria-pressed={language === item.code} onClick={() => setLanguage(item.code)}>{item.short}</button>
+      <button key={item.code} type="button" lang={item.code} title={item.name} aria-label={t('language.aria', { name: item.name })} aria-pressed={language === item.code} onClick={() => setLanguage(item.code)}><img className="language-flag" src={`${import.meta.env.BASE_URL}flags/${item.flag}.svg`} alt="" aria-hidden="true" width="24" height="16"/></button>
     )}
   </div>
 }
