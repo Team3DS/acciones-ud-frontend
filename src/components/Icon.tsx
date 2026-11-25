@@ -1,3 +1,5 @@
+import { useId } from 'react'
+
 export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   const paths: Record<string, React.ReactNode> = {
     play: <path d="m8 5 11 7-11 7Z"/>,
@@ -28,4 +30,21 @@ export function Icon({ name, size = 20 }: { name: string; size?: number }) {
   }
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name] || paths.grid}</svg>
 }
-export function Brand() { return <a className="brand" href="#" onClick={e => e.preventDefault()} aria-label="Acciones UD"><img className="brand-mark" src={`${import.meta.env.BASE_URL}acciones-ud.svg`} alt=""/><span>Acciones <b>UD</b></span></a> }
+export function Brand() { return <a className="brand" href="#" onClick={e => e.preventDefault()} aria-label="Acciones UD"><BrandMark/><span>Acciones <b>UD</b></span></a> }
+
+
+export function BrandMark() {
+  const id = useId()
+  return <svg className="brand-mark" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id={`${id}-ring`} x1="15" y1="15" x2="105" y2="112" gradientUnits="userSpaceOnUse"><stop stopColor="var(--brand-highlight)"/><stop offset=".38" stopColor="var(--accent)"/><stop offset=".72" stopColor="var(--accent-bright)"/><stop offset="1" stopColor="var(--brand-deep)"/></linearGradient>
+      <linearGradient id={`${id}-bars`} x1="76" y1="23" x2="90" y2="99" gradientUnits="userSpaceOnUse"><stop stopColor="var(--brand-highlight)"/><stop offset=".45" stopColor="var(--accent)"/><stop offset="1" stopColor="var(--accent-bright)"/></linearGradient>
+      <linearGradient id={`${id}-soft`} x1="41" y1="67" x2="57" y2="112" gradientUnits="userSpaceOnUse"><stop stopColor="var(--brand-soft)"/><stop offset="1" stopColor="var(--brand-soft-end)"/></linearGradient>
+    </defs>
+    <path d="M103 21A53 53 0 1 0 106 96" stroke={`url(#${id}-ring)`} strokeWidth="5"/>
+    <rect x="35" y="67" width="20" height="40" rx="2.5" fill={`url(#${id}-soft)`}/>
+    <rect x="64" y="49" width="20" height="47" rx="2.5" fill={`url(#${id}-bars)`}/>
+    <rect x="93" y="30" width="20" height="50" rx="2.5" fill={`url(#${id}-bars)`}/>
+    <path d="M103 21v9" stroke="var(--brand-highlight)" strokeWidth="2.5" strokeLinecap="round"/>
+  </svg>
+}

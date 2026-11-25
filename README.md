@@ -44,6 +44,8 @@ Estado de `main` del backend al 22/11/2026: M1 envía el código MFA por M8 y en
 
 El selector de idioma está junto al de apariencia en el acceso, en la barra del espacio de trabajo y en el registro del prototipo. La elección se conserva en `acciones-ud.language`, se sincroniza entre pestañas y actualiza el atributo `lang` del documento. En la primera visita se usa el idioma del navegador: inglés si el navegador está en inglés y español en cualquier otro caso.
 
+El selector muestra banderas SVG de Colombia y Estados Unidos, con nombres accesibles en cada botón. El tema claro usa azules y grises; sus colores, incluidos el logo y la gráfica de la portada, se definen en `src/styles/identity.css`. El tema oscuro conserva sus acentos dorados.
+
 Los textos están en `src/i18n/es.json` y `src/i18n/en.json`, con las mismas claves en ambos archivos. Los componentes los leen con `useI18n()`:
 
 ```tsx

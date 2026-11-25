@@ -3,7 +3,8 @@
 .onboarding-header .preference-controls .theme-selector { margin-left: 0; }
 .language-selector { align-items: center; }
 .language-selector .language-icon { display: inline-flex; align-items: center; padding: 0 4px 0 6px; color: var(--muted); }
-.language-selector button { font-weight: 600; letter-spacing: .04em; min-width: 32px; }
+.language-selector button { min-width: 40px; min-height: 34px; padding: 0 8px; }
+.language-flag { display: block; width: 24px; height: 16px; object-fit: fill; border-radius: 2px; box-shadow: 0 0 0 1px var(--border); }
 .workspace-market + .workspace-market { margin-top: 12px; }
 @media (max-width: 960px) {
   .onboarding-header .preference-controls { order: 3; margin-left: 0; }
@@ -13,5 +14,11 @@
   .onboarding-header .preference-controls .theme-selector { width: auto; margin-top: 0; }
   .onboarding-header .preference-controls .theme-selector:first-child { flex: 1; }
   .topbar .language-selector .language-icon { display: none; }
-  .topbar .language-selector button { min-width: 0; }
+  .topbar .language-selector button { min-width: 36px; padding: 0 6px; }
+}
+@media (max-width: 420px) {
+  .onboarding-header .preference-controls .theme-selector:first-child span { display: none; }
+  .topbar { flex-wrap: wrap; height: auto; min-height: 65px; padding: 10px 12px; }
+  .topbar-location { flex: 1; }
+  .topbar-tools { margin-left: auto; }
 }
